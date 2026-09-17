@@ -21,7 +21,7 @@ class User(db.Model):
     branch = db.relationship('Branch', backref='users', lazy=True)
     appointments = db.relationship('Appointment', backref='customer', lazy=True, foreign_keys='Appointment.customer_id')
     queue_tickets = db.relationship('QueueTicket', backref='customer', lazy=True, foreign_keys='QueueTicket.customer_id')
-    documents = db.relationship('Document', backref='uploader', lazy=True, foreign_keys='Document.uploaded_by')
+    documents = db.relationship('Document', backref='uploader', lazy=True, foreign_keys='Document.customer_id')
     feedback = db.relationship('Feedback', backref='customer', lazy=True, foreign_keys='Feedback.customer_id')
     posts = db.relationship('BranchPost', backref='author', lazy=True, foreign_keys='BranchPost.author_id')
     notifications = db.relationship('Notification', backref='user', lazy=True, foreign_keys='Notification.user_id')
