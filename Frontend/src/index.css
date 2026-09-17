@@ -110,12 +110,27 @@
     transform: none;
   }
 
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Small pop used by the landing page's live lifecycle rail when the step changes */
+  @keyframes step-pop {
+    0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .step-pop {
+    animation: step-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .reveal {
       opacity: 1;
       transform: none;
       transition: none;
     }
+    .step-pop { animation: none; }
     html { scroll-behavior: auto; }
   }
 }

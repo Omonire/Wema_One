@@ -1,7 +1,59 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../../components/ScrollReveal';
 
+const LIFECYCLE_STEPS = [
+  { label: 'Start', icon: 'confirmation_number', caption: 'Ticket #WMA-2841 created — your spot is saved from home.' },
+  { label: 'Choose Time', icon: 'schedule', caption: 'Arrival set for 10:30 AM — desk 4 is reserved for you.' },
+  { label: 'Check Papers', icon: 'verified_user', caption: 'ID & documents pre-approved — nothing is missing.' },
+  { label: 'Pay Fee', icon: 'payments', caption: '$45.00 paid instantly — receipt sent to your phone.' },
+  { label: 'Walk In', icon: 'directions_walk', caption: "You're 3rd in line — about 6 minutes to your desk." },
+  { label: 'Get Served', icon: 'support_agent', caption: 'Your officer already has your file open — zero re-explaining.' },
+  { label: 'Done Happy', icon: 'sentiment_very_satisfied', caption: 'Visit complete in 14 minutes — feedback texted to you. ⭐' },
+];
+
+const FAQS = [
+  {
+    q: 'Do I still need to visit the office at all?',
+    a: 'Only for the few minutes that truly need to be in person. Booking, paperwork checks, and payments all happen from your phone first — so your visit is short and everything is ready when you arrive.',
+  },
+  {
+    q: 'How do I save my spot in the line?',
+    a: 'Message us on WhatsApp or book online, and you get a digital ticket with your live position. Luma tells you when to leave home so you arrive right when your seat is ready.',
+  },
+  {
+    q: 'What happens if I forget a document?',
+    a: "You won't get turned away. Snap photos of your ID and forms before you travel — Luma checks them instantly and tells you exactly what's missing while you're still at home.",
+  },
+  {
+    q: 'Is my personal information safe?',
+    a: 'Yes. Your details are protected with bank-grade encryption, only the staff member helping you can see your file, and every record is stamped and tamper-proof.',
+  },
+  {
+    q: 'Does using Luma cost anything?',
+    a: 'Luma is free for customers. Any service fees are shown upfront before you pay — no hidden charges, and your receipt lands on your phone instantly.',
+  },
+  {
+    q: 'Which organizations use Luma?',
+    a: 'Banks, hospitals and clinics, government offices, phone companies, and online apps — anywhere people used to wait in lines to get served.',
+  },
+];
+
 export default function LandingPage() {
+  const [activeStep, setActiveStep] = useState(0);
+  const [openFaq, setOpenFaq] = useState(0);
+
+  // Auto-advance the lifecycle rail like a live demo (pauses longer on the final step).
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const ms = activeStep === LIFECYCLE_STEPS.length - 1 ? 2400 : 1500;
+    const t = setTimeout(() => setActiveStep((s) => (s + 1) % LIFECYCLE_STEPS.length), ms);
+    return () => clearTimeout(t);
+  }, [activeStep]);
+
+  const railProgress = activeStep / (LIFECYCLE_STEPS.length - 1);
+  const currentStep = LIFECYCLE_STEPS[activeStep];
+
   return (
     <div className="bg-surface text-on-surface">
       {/* 1. HERO — FULL-BLEED VIDEO */}
@@ -114,6 +166,113 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* 2.5 LIVE DEMO — ANIMATED LIFECYCLE RAIL */}
+      <section className="w-full py-24 lg:py-32 px-6 lg:px-12 max-w-7xl mx-auto" id="live-demo">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <Reveal>
+            <span className="font-label-caps text-xs uppercase text-primary-container font-semibold tracking-wider">A live look inside</span>
+          </Reveal>
+          <Reveal delay={80}>
+            <h2 className="font-headline-lg text-3xl sm:text-4xl font-bold text-on-surface mt-2 tracking-tight">
+              Watch a visit unfold — before it happens.
+            </h2>
+          </Reveal>
+          <Reveal delay={160}>
+            <p className="font-body-lg text-lg text-on-surface-variant mt-3 leading-relaxed">
+              Every step below runs automatically for every customer. Tap any step to jump around.
+            </p>
+          </Reveal>
+        </div>
+
+        <Reveal direction="up">
+          <div className="relative bg-surface-container-lowest rounded-2xl border border-outline-variant/50 p-6 lg:p-8 shadow-xl max-w-5xl mx-auto">
+            {/* Rail header */}
+            <div className="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-8">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary-container text-[20px]">alt_route</span>
+                <span className="font-label-caps text-xs uppercase text-on-surface-variant font-semibold tracking-wider">How your visit works</span>
+              </div>
+              <span className="font-data-mono-xs text-xs text-tertiary font-semibold flex items-center gap-1.5 bg-tertiary-fixed/40 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+                Live &amp; Ready
+              </span>
+            </div>
+
+            {/* The animated rail */}
+            <div className="relative overflow-x-auto pb-3">
+              <div className="min-w-[680px] flex items-start justify-between relative px-4 pt-1">
+                {/* Tracks */}
+                <div className="absolute left-8 right-8 top-3.5 h-0.5 bg-surface-container-high" aria-hidden="true"></div>
+                <div
+                  className="absolute left-8 top-3.5 h-0.5 bg-primary-container transition-all duration-700 ease-out"
+                  style={{ width: `calc((100% - 4rem) * ${railProgress})` }}
+                  aria-hidden="true"
+                ></div>
+
+                {LIFECYCLE_STEPS.map((step, i) => {
+                  const state = i < activeStep ? 'done' : i === activeStep ? 'active' : 'todo';
+                  return (
+                    <button
+                      key={step.label}
+                      type="button"
+                      onClick={() => setActiveStep(i)}
+                      aria-label={`Show step ${i + 1}: ${step.label}`}
+                      aria-current={state === 'active' ? 'step' : undefined}
+                      className="flex flex-col items-center text-center z-10 w-20 cursor-pointer group"
+                    >
+                      <span
+                        className={`w-7 h-7 rounded-full flex items-center justify-center font-data-mono-xs text-xs font-bold transition-all duration-300 ${
+                          state === 'done'
+                            ? 'bg-primary-container text-white shadow-sm'
+                            : state === 'active'
+                              ? 'bg-primary-container text-white ring-4 ring-primary-fixed scale-110 shadow-md'
+                              : 'bg-surface-container-high text-on-surface-variant group-hover:bg-surface-container-highest'
+                        }`}
+                      >
+                        {state === 'done' ? '✓' : String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span
+                        className={`mt-1.5 text-xs transition-colors duration-300 ${
+                          state === 'active' ? 'font-bold text-primary-container' : state === 'done' ? 'font-medium text-on-surface' : 'font-medium text-on-surface-variant'
+                        }`}
+                      >
+                        {step.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Live status panel — follows the active step */}
+            <div className="mt-5 pt-6 border-t border-outline-variant/30">
+              <div key={activeStep} className="step-pop flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="w-11 h-11 rounded-xl bg-primary-fixed flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary-container text-[24px]">{currentStep.icon}</span>
+                  </span>
+                  <div>
+                    <div className="font-data-mono-xs text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">
+                      Step {activeStep + 1} of {LIFECYCLE_STEPS.length} · {currentStep.label}
+                    </div>
+                    <div className="font-bold text-on-surface text-sm sm:text-base">{currentStep.caption}</div>
+                  </div>
+                </div>
+                <div className="sm:ml-auto flex items-center gap-1.5 shrink-0" aria-hidden="true">
+                  {LIFECYCLE_STEPS.map((s, i) => (
+                    <span
+                      key={s.label}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === activeStep ? 'w-6 bg-primary-container' : i < activeStep ? 'w-1.5 bg-primary-fixed-dim' : 'w-1.5 bg-surface-container-high'}`}
+                    ></span>
+                  ))
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* 3. THE CORE PROBLEM & PROMISE */}
@@ -602,6 +761,72 @@ export default function LandingPage() {
               <h4 className="text-base font-bold text-on-surface">Tamper-Proof Records</h4>
               <p className="text-xs text-on-surface-variant leading-relaxed">Every document and receipt is safely stamped and stored.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7.5 FAQ ACCORDION */}
+      <section className="w-full py-24 lg:py-32 bg-surface-container-low border-y border-outline-variant/30" id="faq">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Left intro */}
+          <div className="lg:col-span-5">
+            <Reveal>
+              <span className="font-label-caps text-xs uppercase text-primary-container font-semibold tracking-wider">Questions, answered</span>
+              <h2 className="font-headline-lg text-3xl sm:text-4xl font-bold text-on-surface mt-2 tracking-tight">
+                Everything you're wondering, in plain English.
+              </h2>
+              <p className="font-body-lg text-lg text-on-surface-variant mt-3 leading-relaxed">
+                No jargon, no fine print. If it's not here, our team is one message away.
+              </p>
+            </Reveal>
+            <Reveal delay={120}>
+              <a
+                href="mailto:hello@luma.com"
+                className="mt-8 inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-sm font-semibold border border-outline-variant/60 shadow-sm transition-all"
+              >
+                <span className="material-symbols-outlined text-primary-container text-[18px]">support_agent</span>
+                <span>Still stuck? Ask us anything</span>
+              </a>
+            </Reveal>
+          </div>
+
+          {/* Accordion */}
+          <div className="lg:col-span-7 space-y-3">
+            {FAQS.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <Reveal key={faq.q} delay={i * 70}>
+                  <div className={`bg-surface-container-lowest border rounded-xl overflow-hidden transition-colors ${isOpen ? 'border-primary-container/40 shadow-sm' : 'border-outline-variant/40'}`}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-surface-container-low transition-colors"
+                    >
+                      <span className="flex items-center gap-3 font-semibold text-on-surface text-sm sm:text-base">
+                        <span className="font-data-mono-xs text-xs text-primary font-bold">{String(i + 1).padStart(2, '0')}</span>
+                        {faq.q}
+                      </span>
+                      <span
+                        className={`material-symbols-outlined text-[22px] shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary-container' : 'text-on-surface-variant'}`}
+                        aria-hidden="true"
+                      >
+                        expand_more
+                      </span>
+                    </button>
+                    {/* Smooth height animation via grid-template-rows trick */}
+                    <div
+                      className="grid transition-[grid-template-rows] duration-300 ease-out"
+                      style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="px-5 pb-5 sm:pl-[3.4rem] text-sm text-on-surface-variant leading-relaxed">{faq.a}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
