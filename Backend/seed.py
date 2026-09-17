@@ -2,7 +2,6 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from app import create_app
 from extensions import db
 from models.user import User
 from models.branch import Branch, BranchService
@@ -16,19 +15,22 @@ from models.branchconnect import BranchPost, BranchSolution, SolutionUsage
 from datetime import date, time, datetime, timedelta
 import random
 
-app = create_app()
 
-
-def seed():
+def seed(app, drop=True, only_if_empty=False):
     with app.app_context():
-        db.drop_all()
+        if drop:
+            db.drop_all()
         db.create_all()
+
+        if only_if_empty and User.query.first():
+            print("Database already contains data; skipping seed.")
+            return False
 
         print("Seeding users...")
         users = []
         roles_data = [
-            ('admin@wemaone.com', 'Admin', 'User', 'ADMIN', None),
-            ('superadmin@wemaone.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
+            ('admin@Luma.com', 'Admin', 'User', 'ADMIN', None),
+            ('superadmin@Luma.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
         ]
         for email, first, last, role, bid in roles_data:
             u = User(email=email, first_name=first, last_name=last, role=role, phone='08012345678')
@@ -46,7 +48,7 @@ def seed():
         for name, addr, city, state in branches_data:
             b = Branch(name=name, address=addr, city=city, state=state,
                        phone=f'01-{random.randint(1000000, 9999999)}',
-                       email=f'{name.split()[0].lower()}@wemabank.com',
+                       email=f'{name.split()[0].lower()}@luma.com',
                        latitude=random.uniform(6.0, 7.5),
                        longitude=random.uniform(3.0, 5.0))
             db.session.add(b)
@@ -54,10 +56,10 @@ def seed():
         db.session.flush()
 
         bo_emails = [
-            ('officer1@wemaone.com', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
-            ('officer2@wemaone.com', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
-            ('manager1@wemaone.com', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
-            ('manager2@wemaone.com', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
+            ('officer1@Luma.com', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
+            ('officer2@Luma.com', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
+            ('manager1@Luma.com', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
+            ('manager2@Luma.com', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
         ]
         for email, first, last, role, bidx in bo_emails:
             u = User(email=email, first_name=first, last_name=last, role=role,
@@ -67,7 +69,7 @@ def seed():
 
         print("Seeding services...")
         services_data = [
-            ('Open Business Account', 'Start your business journey with a Wema business account', 'Accounts', 45, 5000,
+            ('Open Business Account', 'Start your business journey with a Luma business account', 'Accounts', 45, 5000,
              [('CAC Documents', 'Certificate of Incorporation and MEMART', True),
               ('Valid ID', 'Government-issued photo ID', True),
               ('Passport Photograph', 'Recent passport-sized photograph', True),
@@ -79,7 +81,7 @@ def seed():
               ('BVN', 'Bank Verification Number', True)]),
             ('Card Services', 'Apply for debit or credit card, card replacement', 'Cards', 20, 1500,
              [('Valid ID', 'Government-issued photo ID', True),
-              ('Account Number', 'Existing Wema account number', True)]),
+              ('Account Number', 'Existing Luma account number', True)]),
             ('Account Verification', 'Verify your account for enhanced services', 'Verification', 15, 0,
              [('Valid ID', 'Government-issued photo ID', True),
               ('BVN', 'Bank Verification Number', True)]),
@@ -166,7 +168,7 @@ def seed():
             db.session.add(appt)
             db.session.flush()
 
-            ticket_num = f"WMA-{random.randint(1000, 9999)}"
+            ticket_num = f"LUM-{random.randint(1000, 9999)}"
             ticket = QueueTicket(
                 ticket_number=ticket_num,
                 customer_id=customer.id,
@@ -223,8 +225,8 @@ def seed():
                 service_id=services[i % len(services)].id,
                 branch_id=branches[i % len(branches)].id,
                 amount=services[i % len(services)].fee,
-                payment_method='WemaPay',
-                transaction_ref=f"WEM-{random.randint(100000, 999999)}",
+                payment_method='ALAT Authenticator',
+                transaction_ref=f"LUM-{random.randint(100000, 999999)}",
                 status='SUCCESSFUL',
                 paid_at=datetime.now() - timedelta(days=random.randint(0, 30))
             )
@@ -338,11 +340,19 @@ def seed():
         print("Seed data created successfully!")
         print("\nDemo Credentials:")
         print("  Customer:    david@test.com / password123")
-        print("  Officer:     officer1@wemaone.com / password123")
-        print("  Manager:     manager1@wemaone.com / password123")
-        print("  Admin:       admin@wemaone.com / password123")
-        print("  Super Admin: superadmin@wemaone.com / password123")
+        print("  Officer:     officer1@luma.com / password123")
+        print("  Manager:     manager1@luma.com / password123")
+        print("  Admin:       admin@luma.com / password123")
+        print("  Super Admin: superadmin@luma.com / password123")
+        return True
+
+
+def seed_if_empty(app):
+    """Seed demo data only when the database has no users (used when SEED_DATA=1)."""
+    return seed(app, drop=False, only_if_empty=True)
 
 
 if __name__ == '__main__':
-    seed()
+    from app import create_app
+    _app = create_app()
+    seed(_app, drop=True, only_if_empty=False)

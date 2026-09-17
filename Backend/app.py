@@ -12,6 +12,17 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
+    if config_name == 'production':
+        missing = []
+        if not os.getenv('DATABASE_URL'):
+            missing.append('DATABASE_URL (PostgreSQL)')
+        if app.config['SECRET_KEY'].startswith('dev-'):
+            missing.append('SECRET_KEY')
+        if app.config['JWT_SECRET_KEY'].startswith('dev-'):
+            missing.append('JWT_SECRET_KEY')
+        if missing:
+            raise RuntimeError('Production misconfigured. Set: ' + ', '.join(missing))
+
     db.init_app(app)
     ma.init_app(app)
     jwt.init_app(app)
@@ -35,6 +46,13 @@ def create_app(config_name=None):
     with app.app_context():
         db.create_all()
         _ensure_columns(app)
+
+    if app.config.get('SEED_DATA'):
+        try:
+            from seed import seed_if_empty
+            seed_if_empty(app)
+        except Exception as e:
+            app.logger.warning(f'SEED_DATA enabled but seeding failed: {e}')
 
     return app
 

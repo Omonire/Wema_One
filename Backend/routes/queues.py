@@ -11,7 +11,7 @@ queues_bp = Blueprint('queues', __name__)
 
 def generate_ticket_number():
     num = random.randint(1000, 9999)
-    return f"WMA-{num}"
+    return f"LUM-{num}"
 
 
 @queues_bp.route('/', methods=['POST'])

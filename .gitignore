@@ -3,7 +3,7 @@ Backend/uploads/
 Backend/__pycache__/
 Backend/**/__pycache__/
 Backend/*.pyc
-Backend/wemaone.db
+Backend/Luna.db
 Backend/*.db
 Backend/instance/
 

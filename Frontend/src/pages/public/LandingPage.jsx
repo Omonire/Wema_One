@@ -264,7 +264,7 @@ export default function LandingPage() {
                 <div className="mt-4 p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs">
                   <div className="flex justify-between font-semibold">
                     <span className="text-on-surface">University Road Branch</span>
-                    <span className="text-primary font-data-mono">Ticket #WMA-2841</span>
+                    <span className="text-primary font-data-mono">Ticket #LUM-2841</span>
                   </div>
                   <div className="flex justify-between text-on-surface-variant text-[11px] mt-1">
                     <span>3 people ahead</span>

@@ -28,9 +28,9 @@ export default function LoginPage() {
 
   const demoAccounts = [
     { label: 'Customer', email: 'david@test.com' },
-    { label: 'Officer', email: 'officer1@wemaone.com' },
-    { label: 'Manager', email: 'manager1@wemaone.com' },
-    { label: 'Admin', email: 'admin@wemaone.com' },
+    { label: 'Officer', email: 'officer1@Luma.com' },
+    { label: 'Manager', email: 'manager1@Luma.com' },
+    { label: 'Admin', email: 'admin@Luma.com' },
   ];
 
   return (

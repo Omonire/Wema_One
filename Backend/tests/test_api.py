@@ -144,7 +144,7 @@ def test_create_queue_ticket(client):
     data = resp.get_json()
     assert resp.status_code == 201
     assert data['success'] is True
-    assert 'WMA-' in data['data']['ticket_number']
+    assert 'LUM-' in data['data']['ticket_number']
 
 
 def test_create_feedback(client):

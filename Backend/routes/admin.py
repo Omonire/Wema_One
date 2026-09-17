@@ -61,7 +61,7 @@ def health():
         'success': True,
         'data': {
             'status': 'healthy',
-            'service': 'WemaOne API',
+            'service': 'Luma API',
             'version': '1.0.0'
         }
     })
