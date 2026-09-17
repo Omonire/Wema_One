@@ -1,1 +1,75 @@
 @import "tailwindcss";
+
+@theme {
+  --font-headline: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-primary: #003ec7;
+  --color-primary-container: #0052ff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #dfe3ff;
+  --color-primary-fixed: #dde1ff;
+  --color-primary-fixed-dim: #b7c4ff;
+  --color-on-primary-fixed: #001452;
+  --color-on-primary-fixed-variant: #0038b6;
+
+  --color-secondary: #5a5e6a;
+  --color-secondary-container: #dfe2f1;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-fixed: #171b26;
+  --color-on-secondary-fixed-variant: #434652;
+  --color-secondary-fixed: #dfe2f1;
+  --color-secondary-fixed-dim: #c3c6d4;
+
+  --color-tertiary: #005a3c;
+  --color-tertiary-container: #007550;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed: #6ffbbe;
+  --color-tertiary-fixed-dim: #4edea3;
+  --color-on-tertiary-fixed: #002113;
+  --color-on-tertiary-fixed-variant: #005236;
+  --color-on-tertiary-container: #72fec0;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-variant: #d3e4fe;
+  --color-surface-tint: #004ced;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #434656;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+
+  --color-background: #f8f9ff;
+  --color-on-background: #0b1c30;
+  --color-outline: #737688;
+  --color-outline-variant: #c3c5d9;
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-inverse-primary: #b7c4ff;
+
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+  --spacing-margin: 2rem;
+  --spacing-margin-sm: 1rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-gutter-sm: 1rem;
+}
+
+@layer base {
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--color-surface); color: var(--color-on-surface); }
+  ::-webkit-scrollbar { display: none; }
+}

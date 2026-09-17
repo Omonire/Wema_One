@@ -4,6 +4,11 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  css: {
+    postcss: {
+      plugins: []
+    }
+  },
   server: {
     port: 5173,
     proxy: {

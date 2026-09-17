@@ -37,7 +37,7 @@ function PrivateRoute({ children, roles }) {
   const { user, loading } = useAuth();
   if (loading) return <LoadingPage />;
   if (!user) return <Navigate to="/login" />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
+  if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
   return children;
 }
 
@@ -59,7 +59,7 @@ function Layout() {
   const location = useLocation();
   const isLanding = location.pathname === '/';
   return (
-    <div className={`min-h-screen flex flex-col ${isLanding ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen flex flex-col ${isLanding ? 'bg-surface' : 'bg-gray-50'}`}>
       <Navbar />
       <main className="flex-1">
         <Routes>
@@ -99,7 +99,7 @@ function Layout() {
             <div className="text-center py-20">
               <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
               <p className="text-gray-500 mb-6">Page not found</p>
-              <a href="/" className="bg-[#0C2D57] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0A2445]">Go Home</a>
+              <a href="/" className="bg-primary-container text-on-primary px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)]">Go Home</a>
             </div>
           } />
         </Routes>
