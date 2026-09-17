@@ -2,8 +2,17 @@
 
 @theme {
   --font-headline: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-lg: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-md: 'Plus Jakarta Sans', sans-serif;
+  --font-display-lg: 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --font-body-lg: 'Inter', sans-serif;
+  --font-body-md: 'Inter', sans-serif;
+  --font-body-sm: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-data-mono: 'JetBrains Mono', monospace;
+  --font-data-mono-xs: 'JetBrains Mono', monospace;
+  --font-label-caps: 'Inter', sans-serif;
 
   --color-primary: #003ec7;
   --color-primary-container: #0052ff;
@@ -70,6 +79,43 @@
 
 @layer base {
   html, body { margin: 0; padding: 0; }
-  body { font-family: var(--font-body); background: var(--color-surface); color: var(--color-on-surface); }
+  body { font-family: var(--font-body); background: var(--color-surface); color: var(--color-on-surface); overscroll-behavior: none; }
   ::-webkit-scrollbar { display: none; }
+  html { scroll-behavior: smooth; }
+}
+
+/* ==========================================================================
+   SCROLL REVEAL ANIMATIONS
+   Elements start hidden and animate in when they enter the viewport.
+   `.reveal` is the hidden state; `.reveal.is-visible` is the shown state.
+   Respect users who prefer reduced motion.
+   ========================================================================== */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transition-property: opacity, transform;
+    transition-duration: 700ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .reveal-down { transform: translateY(-24px); }
+  .reveal-up { transform: translateY(28px); }
+  .reveal-left { transform: translateX(36px); }
+  .reveal-right { transform: translateX(-36px); }
+  .reveal-zoom { transform: scale(0.92); }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    html { scroll-behavior: auto; }
+  }
 }

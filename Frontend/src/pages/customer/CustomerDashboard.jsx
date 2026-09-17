@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { StatusBadge } from '../../components/ui/Elements';
+import Reveal from '../../components/ScrollReveal';
+import { StatusBadge, LoadingPage, Card, CardTitle } from '../../components/ui/Elements';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();
@@ -23,114 +24,106 @@ export default function CustomerDashboard() {
     }).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#0C2D57] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading) return <LoadingPage />;
 
   const activeAppts = appointments.filter(a => a.status === 'SCHEDULED' || a.status === 'CONFIRMED');
   const activeTickets = tickets.filter(t => ['WAITING', 'CALLED', 'IN_SERVICE', 'CHECKED_IN'].includes(t.status));
 
+  const quickActions = [
+    { to: '/services', icon: 'search', label: 'Discover Services', bg: 'bg-primary-fixed/40', color: 'text-primary' },
+    { to: '/customer/queue', icon: 'confirmation_number', label: 'Join Queue', bg: 'bg-primary-fixed/40', color: 'text-primary' },
+    { to: '/customer/documents', icon: 'upload_file', label: 'Upload Docs', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
+    { to: '/customer/payments', icon: 'payments', label: 'Payments', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
+    { to: '/customer/feedback', icon: 'forum', label: 'Give Feedback', bg: 'bg-primary-fixed/40', color: 'text-primary' },
+  ];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome, {user?.first_name}</h1>
-        <p className="text-gray-500 text-sm">Your connected banking dashboard</p>
-      </div>
+      <Reveal direction="down" className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <span className="font-data-mono-xs text-xs uppercase text-primary font-semibold tracking-wider">Your dashboard</span>
+          <h1 className="font-headline-md text-2xl md:text-3xl font-bold text-on-surface tracking-tight">Welcome, {user?.first_name}</h1>
+          <p className="text-on-surface-variant text-sm">Everything for your visit, in one place.</p>
+        </div>
+        <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-fixed/40 text-tertiary font-data-mono-xs text-xs font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span> All systems ready
+        </span>
+      </Reveal>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Link to="/services" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <span className="text-blue-600 text-lg">🔍</span>
-          </div>
-          <span className="text-sm font-medium text-gray-900">Discover Services</span>
-        </Link>
-        <Link to="/customer/queue" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
-          <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <span className="text-yellow-600 text-lg">📋</span>
-          </div>
-          <span className="text-sm font-medium text-gray-900">Join Queue</span>
-        </Link>
-        <Link to="/customer/documents" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
-          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <span className="text-green-600 text-lg">📄</span>
-          </div>
-          <span className="text-sm font-medium text-gray-900">Upload Docs</span>
-        </Link>
-        <Link to="/customer/payments" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
-          <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <span className="text-emerald-600 text-lg">💳</span>
-          </div>
-          <span className="text-sm font-medium text-gray-900">Payments</span>
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-8">
-        <Link to="/customer/feedback" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
-          <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-            <span className="text-purple-600 text-lg">💬</span>
-          </div>
-          <span className="text-sm font-medium text-gray-900">Give Feedback</span>
-        </Link>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        {quickActions.map((action, i) => (
+          <Reveal key={action.to} delay={i * 70}>
+            <Link to={action.to} className="block bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-center">
+              <div className={`w-10 h-10 rounded-xl ${action.bg} flex items-center justify-center mx-auto mb-2`}>
+                <span className={`material-symbols-outlined ${action.color} text-[20px]`}>{action.icon}</span>
+              </div>
+              <span className="text-sm font-medium text-on-surface">{action.label}</span>
+            </Link>
+          </Reveal>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Active Queue */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Active Queue</h3>
+        <Card delay={100}>
+          <CardTitle icon="confirmation_number">Active Queue</CardTitle>
           {activeTickets.length === 0 ? (
-            <p className="text-sm text-gray-500">No active queue tickets</p>
+            <p className="text-sm text-on-surface-variant">No active queue tickets</p>
           ) : activeTickets.map(t => (
-            <div key={t.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
+            <div key={t.id} className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl mb-2">
               <div>
-                <div className="font-mono font-bold text-[#0C2D57]">{t.ticket_number}</div>
-                <div className="text-xs text-gray-500">{t.service?.name}</div>
+                <div className="font-data-mono font-bold text-primary">{t.ticket_number}</div>
+                <div className="text-xs text-on-surface-variant">{t.service?.name}</div>
               </div>
               <div className="text-right">
                 <StatusBadge status={t.status} />
-                <div className="text-xs text-gray-500 mt-1">Position: {t.position}</div>
+                <div className="text-xs text-on-surface-variant mt-1">Position: {t.position}</div>
               </div>
             </div>
           ))}
-        </div>
+        </Card>
 
         {/* Upcoming Appointments */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Upcoming Appointments</h3>
+        <Card delay={180}>
+          <CardTitle icon="event_available">Upcoming Appointments</CardTitle>
           {activeAppts.length === 0 ? (
-            <p className="text-sm text-gray-500">No upcoming appointments</p>
+            <p className="text-sm text-on-surface-variant">No upcoming appointments</p>
           ) : activeAppts.slice(0, 3).map(a => (
-            <div key={a.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
+            <div key={a.id} className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl mb-2">
               <div>
-                <div className="text-sm font-medium text-gray-900">{a.service?.name}</div>
-                <div className="text-xs text-gray-500">{a.branch?.name}</div>
+                <div className="text-sm font-medium text-on-surface">{a.service?.name}</div>
+                <div className="text-xs text-on-surface-variant">{a.branch?.name}</div>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">{a.appointment_date}</div>
-                <div className="text-xs text-gray-500">{a.appointment_time}</div>
+                <div className="text-sm font-medium text-on-surface">{a.appointment_date}</div>
+                <div className="text-xs text-on-surface-variant">{a.appointment_time}</div>
               </div>
             </div>
           ))}
-        </div>
+        </Card>
 
         {/* Recent Feedback */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 lg:col-span-2">
-          <h3 className="font-semibold text-gray-900 mb-4">Recent Feedback</h3>
+        <Card delay={240} className="lg:col-span-2">
+          <CardTitle icon="forum">Recent Feedback</CardTitle>
           {feedbacks.length === 0 ? (
-            <p className="text-sm text-gray-500">No feedback submitted yet</p>
+            <p className="text-sm text-on-surface-variant">No feedback submitted yet</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead><tr className="border-b border-gray-100">
-                  <th className="text-left py-2 font-medium text-gray-500">Type</th>
-                  <th className="text-left py-2 font-medium text-gray-500">Content</th>
-                  <th className="text-left py-2 font-medium text-gray-500">Sentiment</th>
-                  <th className="text-left py-2 font-medium text-gray-500">Status</th>
+                <thead><tr className="border-b border-outline-variant/20">
+                  <th className="text-left py-2 font-medium text-on-surface-variant">Type</th>
+                  <th className="text-left py-2 font-medium text-on-surface-variant">Content</th>
+                  <th className="text-left py-2 font-medium text-on-surface-variant">Sentiment</th>
+                  <th className="text-left py-2 font-medium text-on-surface-variant">Status</th>
                 </tr></thead>
                 <tbody>
                   {feedbacks.slice(0, 5).map(f => (
-                    <tr key={f.id} className="border-b border-gray-50">
+                    <tr key={f.id} className="border-b border-outline-variant/10">
                       <td className="py-2"><StatusBadge status={f.type} /></td>
-                      <td className="py-2 text-gray-600 max-w-xs truncate">{f.content}</td>
+                      <td className="py-2 text-on-surface-variant max-w-xs truncate">{f.content}</td>
                       <td className="py-2">
-                        {f.analysis && <span className={`font-medium ${f.analysis.sentiment === 'Positive' ? 'text-green-600' : f.analysis.sentiment === 'Negative' ? 'text-red-600' : 'text-yellow-600'}`}>{f.analysis.sentiment}</span>}
+                        {f.analysis && <span className={`font-medium ${f.analysis.sentiment === 'Positive' ? 'text-tertiary' : f.analysis.sentiment === 'Negative' ? 'text-error' : 'text-primary'}`}>{f.analysis.sentiment}</span>}
                       </td>
                       <td className="py-2"><StatusBadge status={f.status} /></td>
                     </tr>
@@ -139,7 +132,7 @@ export default function CustomerDashboard() {
               </table>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

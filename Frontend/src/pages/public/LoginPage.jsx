@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Reveal from '../../components/ScrollReveal';
+import { Field, Input, Alert } from '../../components/ui/Elements';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -24,48 +26,60 @@ export default function LoginPage() {
     }
   };
 
+  const demoAccounts = [
+    { label: 'Customer', email: 'david@test.com' },
+    { label: 'Officer', email: 'officer1@wemaone.com' },
+    { label: 'Manager', email: 'manager1@wemaone.com' },
+    { label: 'Admin', email: 'admin@wemaone.com' },
+  ];
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Ambient backlight */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-primary/10 via-primary-container/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-[#0C2D57] rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-lg">W</span>
+        <Reveal direction="zoom">
+          <div className="text-center mb-8">
+            <div className="w-12 h-12 bg-primary-container rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_4px_14px_rgba(0,82,255,0.3)]">
+              <span className="text-white font-bold text-lg font-headline-md">L</span>
+            </div>
+            <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">Welcome back</h1>
+            <p className="text-on-surface-variant text-sm mt-1">Sign in to your Luma account</p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your WemaOne account</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          {error && <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg mb-4">{error}</div>}
+        </Reveal>
+
+        <Reveal direction="up" delay={120} className="bg-surface-container-lowest rounded-2xl border border-outline-variant/40 p-6 shadow-xl">
+          {error && <Alert kind="error" className="mb-4">{error}</Alert>}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57] focus:border-transparent" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57] focus:border-transparent" />
-            </div>
+            <Field label="Email">
+              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus />
+            </Field>
+            <Field label="Password">
+              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+            </Field>
             <button type="submit" disabled={loading}
-              className="w-full bg-[#0C2D57] text-white py-2.5 rounded-lg font-medium text-sm hover:bg-[#0A2445] disabled:opacity-50">
+              className="w-full bg-primary-container hover:bg-primary text-white py-2.5 rounded-lg font-semibold text-sm transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)] disabled:opacity-50 inline-flex items-center justify-center gap-2">
               {loading ? 'Signing in...' : 'Sign In'}
+              {!loading && <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
             </button>
           </form>
           <div className="mt-4 text-center">
-            <Link to="/register" className="text-sm text-[#0C2D57] hover:underline">Create an account</Link>
+            <Link to="/register" className="text-sm text-primary hover:underline font-medium">Create an account</Link>
           </div>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 text-center mb-2">Demo accounts:</p>
-            <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
-              <button onClick={() => { setEmail('david@test.com'); setPassword('password123'); }} className="text-left p-2 bg-gray-50 rounded hover:bg-gray-100">Customer: david@test.com</button>
-              <button onClick={() => { setEmail('officer1@wemaone.com'); setPassword('password123'); }} className="text-left p-2 bg-gray-50 rounded hover:bg-gray-100">Officer: officer1@wemaone.com</button>
-              <button onClick={() => { setEmail('manager1@wemaone.com'); setPassword('password123'); }} className="text-left p-2 bg-gray-50 rounded hover:bg-gray-100">Manager: manager1@wemaone.com</button>
-              <button onClick={() => { setEmail('admin@wemaone.com'); setPassword('password123'); }} className="text-left p-2 bg-gray-50 rounded hover:bg-gray-100">Admin: admin@wemaone.com</button>
+          <div className="mt-4 pt-4 border-t border-outline-variant/20">
+            <p className="text-xs text-on-surface-variant text-center mb-2 font-data-mono-xs uppercase tracking-wider">Demo accounts</p>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {demoAccounts.map(acc => (
+                <button key={acc.email} onClick={() => { setEmail(acc.email); setPassword('password123'); }}
+                  className="text-left p-2 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface">
+                  <span className="font-semibold text-primary">{acc.label}:</span> {acc.email}
+                </button>
+              ))}
             </div>
-            <p className="text-xs text-gray-400 text-center mt-1">Password: password123</p>
+            <p className="text-xs text-on-surface-variant text-center mt-2 font-data-mono-xs">Password: password123</p>
           </div>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

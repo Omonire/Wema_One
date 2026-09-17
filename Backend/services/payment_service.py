@@ -1,40 +1,71 @@
 import uuid
-import random
+from services.alat_pay import ALATPayProvider, ALATNotConfiguredError, ALATPaymentError
 
 
 class PaymentService:
+    """Payment orchestration — ALAT Authenticator is the only payment provider.
+
+    No demo/mock simulation. If ALAT is not configured, payments fail loudly
+    with an honest integration message (never a fake success).
+    """
+
     def __init__(self):
-        self.sandbox_mode = True
+        self.provider = ALATPayProvider()
 
-    def process_payment(self, payment):
-        if self.sandbox_mode:
-            return self._sandbox_process(payment)
-        return self._mock_wema_pay(payment)
-
-    def _sandbox_process(self, payment):
-        success_rate = 0.92
-        if random.random() < success_rate:
+    def init_payment(self, payment):
+        """Phase 1 — initiate consent-based debit via ALAT Authenticator."""
+        try:
+            result = self.provider.init_consent(
+                transaction_ref=payment.transaction_ref,
+                amount=payment.amount,
+                customer_name=f"{payment.customer.first_name} {payment.customer.last_name}".strip() if payment.customer else 'Customer',
+                account_number=None,
+                description=payment.narration or 'Luma service payment',
+            )
+        except ALATNotConfiguredError as e:
             return {
-                'success': True,
-                'transaction_id': f"WMPAY-{uuid.uuid4().hex[:10].upper()}",
-                'status': 'SUCCESSFUL',
-                'message': 'Payment processed successfully (sandbox)',
-                'amount': payment.amount,
-                'currency': payment.currency
+                'success': False,
+                'status': 'FAILED',
+                'error': 'ALAT_NOT_CONFIGURED',
+                'message': str(e),
             }
-        return {
-            'success': False,
-            'error': 'PAYMENT_DECLINED',
-            'message': 'Payment was declined (sandbox simulation)',
-            'amount': payment.amount,
-            'currency': payment.currency
-        }
+        except ALATPaymentError as e:
+            return {
+                'success': False,
+                'status': 'FAILED',
+                'error': 'ALAT_INIT_ERROR',
+                'message': str(e),
+            }
 
-    def _mock_wema_pay(self, payment):
         return {
             'success': True,
-            'transaction_id': f"WEMA-{uuid.uuid4().hex[:10].upper()}",
             'status': 'PENDING',
-            'message': 'Payment initiated via WemaPay (integration pending)',
-            'redirect_url': 'https://pay.wemabank.com/mock-redirect'
+            'consent_required': result.get('consent_required', False),
+            'consent_id': result.get('consent_id'),
+            'provider': result.get('provider'),
+            'message': 'Payment initiated. Customer consent required via ALAT app.',
         }
+
+    def verify_payment(self, payment):
+        """Phase 2 — confirm settlement status from ALAT."""
+        try:
+            result = self.provider.verify_payment(
+                transaction_ref=payment.transaction_ref,
+                consent_id=payment.alat_consent_id,
+            )
+        except ALATNotConfiguredError as e:
+            return {'success': False, 'status': 'FAILED', 'error': 'ALAT_NOT_CONFIGURED', 'message': str(e)}
+        except ALATPaymentError as e:
+            return {'success': False, 'status': 'FAILED', 'error': 'ALAT_VERIFY_ERROR', 'message': str(e)}
+
+        return {
+            'success': result['status'] == 'SUCCESSFUL',
+            'status': result['status'],
+            'provider': result.get('provider'),
+            'platform_reference': result.get('platform_reference'),
+            'message': 'Payment confirmed' if result['status'] == 'SUCCESSFUL' else f"Payment status: {result['status']}",
+        }
+
+    @staticmethod
+    def build_transaction_ref():
+        return f"LUM-{uuid.uuid4().hex[:12].upper()}"

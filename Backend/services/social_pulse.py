@@ -6,22 +6,43 @@ class SocialPulseService:
         self.ai = AIService()
 
     def analyze(self, content, feedback_type='FEEDBACK'):
-        sentiment_result = self.ai._mock_sentiment(content)
-        topic = self.ai._mock_topic_extraction(content)
-        category = self.ai._mock_category(content, feedback_type)
-        priority = self.ai._mock_priority(sentiment_result.get('score'), feedback_type)
+        # Prefer the real LLM provider when configured; fall back to deterministic analysis.
+        try:
+            sentiment_result = self.ai.analyze_text(content, 'sentiment').get('result', {})
+
+            if self.ai.provider:
+                topic_extraction = self.ai.analyze_text(content, 'topic_extraction').get('result', {})
+                topic = topic_extraction.get('topic') or topic_extraction.get('category') or 'General'
+                category = topic_extraction.get('category') or topic
+                sentiment = sentiment_result.get('sentiment', 'Neutral')
+                score = sentiment_result.get('score', 0.5)
+            else:
+                sentiment = sentiment_result.get('sentiment', 'Neutral')
+                score = sentiment_result.get('score', 0.5)
+                topic = self.ai._mock_topic_extraction(content)
+                category = self.ai._mock_category(content, feedback_type)
+
+            priority = self.ai._mock_priority(score, feedback_type)
+        except Exception:
+            sentiment_result = self.ai._mock_sentiment(content)
+            topic = self.ai._mock_topic_extraction(content)
+            category = self.ai._mock_category(content, feedback_type)
+            priority = self.ai._mock_priority(sentiment_result.get('score'), feedback_type)
+            sentiment = sentiment_result.get('sentiment', 'Neutral')
+            score = sentiment_result.get('score', 0.5)
 
         key_phrases = self._extract_key_phrases(content)
-        ai_notes = self._generate_notes(content, sentiment_result, topic, category, feedback_type)
+        ai_notes = self._generate_notes(content, sentiment, score, topic, category, feedback_type)
 
         return {
-            'sentiment': sentiment_result.get('sentiment', 'Neutral'),
-            'sentiment_score': sentiment_result.get('score', 0.5),
+            'sentiment': sentiment,
+            'sentiment_score': score,
             'topic': topic,
             'category': category,
             'priority': priority,
             'key_phrases': key_phrases,
-            'ai_notes': ai_notes
+            'ai_notes': ai_notes,
+            'provider': self.ai.provider_name if self.ai.provider else 'mock',
         }
 
     def _extract_key_phrases(self, content):
@@ -38,11 +59,10 @@ class SocialPulseService:
         meaningful = [w for w in words if len(w) > 3 and w.strip('.,!?;:') not in stop_words]
         return list(set(meaningful[:8]))
 
-    def _generate_notes(self, content, sentiment_result, topic, category, feedback_type):
+    def _generate_notes(self, content, sentiment, score, topic, category, feedback_type):
         lines = []
         lines.append(f"Feedback type: {feedback_type}")
-        lines.append(f"Detected sentiment: {sentiment_result.get('sentiment', 'Neutral')} "
-                     f"(score: {sentiment_result.get('score', 0.5)})")
+        lines.append(f"Detected sentiment: {sentiment} (score: {score})")
         lines.append(f"Primary topic: {topic}")
         lines.append(f"Categorized under: {category}")
         if feedback_type == 'COMPLAINT':

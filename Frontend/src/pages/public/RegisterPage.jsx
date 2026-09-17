@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Reveal from '../../components/ScrollReveal';
+import { Field, Input, Alert } from '../../components/ui/Elements';
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '', password: '' });
@@ -26,54 +28,51 @@ export default function RegisterPage() {
   const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Ambient backlight */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-primary/10 via-primary-container/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-[#0C2D57] rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-lg">W</span>
+        <Reveal direction="zoom">
+          <div className="text-center mb-8">
+            <div className="w-12 h-12 bg-primary-container rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_4px_14px_rgba(0,82,255,0.3)]">
+              <span className="text-white font-bold text-lg font-headline-md">L</span>
+            </div>
+            <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">Create your account</h1>
+            <p className="text-on-surface-variant text-sm mt-1">Join Luma for a connected service experience</p>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          <p className="text-gray-500 text-sm mt-1">Join WemaOne for a connected banking experience</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          {error && <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg mb-4">{error}</div>}
+        </Reveal>
+
+        <Reveal direction="up" delay={120} className="bg-surface-container-lowest rounded-2xl border border-outline-variant/40 p-6 shadow-xl">
+          {error && <Alert kind="error" className="mb-4">{error}</Alert>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input type="text" value={form.first_name} onChange={e => update('first_name', e.target.value)} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57]" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input type="text" value={form.last_name} onChange={e => update('last_name', e.target.value)} required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57]" />
-              </div>
+              <Field label="First Name">
+                <Input type="text" value={form.first_name} onChange={e => update('first_name', e.target.value)} required />
+              </Field>
+              <Field label="Last Name">
+                <Input type="text" value={form.last_name} onChange={e => update('last_name', e.target.value)} required />
+              </Field>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={form.email} onChange={e => update('email', e.target.value)} required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57]" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57]" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input type="password" value={form.password} onChange={e => update('password', e.target.value)} required minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0C2D57]" />
-            </div>
+            <Field label="Email">
+              <Input type="email" value={form.email} onChange={e => update('email', e.target.value)} required />
+            </Field>
+            <Field label="Phone">
+              <Input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)} />
+            </Field>
+            <Field label="Password">
+              <Input type="password" value={form.password} onChange={e => update('password', e.target.value)} required minLength={6} />
+            </Field>
             <button type="submit" disabled={loading}
-              className="w-full bg-[#0C2D57] text-white py-2.5 rounded-lg font-medium text-sm hover:bg-[#0A2445] disabled:opacity-50">
+              className="w-full bg-primary-container hover:bg-primary text-white py-2.5 rounded-lg font-semibold text-sm transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)] disabled:opacity-50 inline-flex items-center justify-center gap-2">
               {loading ? 'Creating account...' : 'Create Account'}
+              {!loading && <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
             </button>
           </form>
           <div className="mt-4 text-center">
-            <Link to="/login" className="text-sm text-[#0C2D57] hover:underline">Already have an account? Sign in</Link>
+            <Link to="/login" className="text-sm text-primary hover:underline font-medium">Already have an account? Sign in</Link>
           </div>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

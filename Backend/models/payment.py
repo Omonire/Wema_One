@@ -13,9 +13,12 @@ class Payment(db.Model):
     queue_ticket_id = db.Column(db.Integer, db.ForeignKey('queue_tickets.id'))
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(10), default='NGN')
-    payment_method = db.Column(db.String(50), default='WemaPay')
+    payment_method = db.Column(db.String(50), default='ALAT Authenticator')
     transaction_ref = db.Column(db.String(100), unique=True, index=True)
     status = db.Column(db.String(20), nullable=False, default='PENDING')
+    alat_consent_id = db.Column(db.String(100))
+    platform_reference = db.Column(db.String(100))
+    narration = db.Column(db.String(255))
     paid_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -37,6 +40,9 @@ class Payment(db.Model):
             'payment_method': self.payment_method,
             'transaction_ref': self.transaction_ref,
             'status': self.status,
+            'alat_consent_id': self.alat_consent_id,
+            'platform_reference': self.platform_reference,
+            'narration': self.narration,
             'paid_at': self.paid_at.isoformat() if self.paid_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

@@ -190,9 +190,9 @@ def test_create_payment(client):
         'amount': 5000
     }, headers={'Authorization': f'Bearer {token}'})
     data = resp.get_json()
-    assert resp.status_code == 201
-    assert data['success'] is True
-    assert data['data']['amount'] == 5000
+
+    # Without ALAT credentials the payment must FAIL honestly (never a fake success).
+    assert data['error'] == 'ALAT_NOT_CONFIGURED'
 
 
 def test_create_branchconnect_post(client):

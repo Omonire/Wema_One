@@ -3,8 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 from extensions import db
 from models.payment import Payment
+from models.user import User
 from services.payment_service import PaymentService
-import uuid
 
 payments_bp = Blueprint('payments', __name__)
 
@@ -20,7 +20,7 @@ def create_payment():
         if field not in data:
             return jsonify({'success': False, 'message': f'{field} is required'}), 400
 
-    transaction_ref = f"WEM-{uuid.uuid4().hex[:12].upper()}"
+    transaction_ref = PaymentService.build_transaction_ref()
 
     payment = Payment(
         customer_id=customer_id,
@@ -30,29 +30,67 @@ def create_payment():
         queue_ticket_id=data.get('queue_ticket_id'),
         amount=data['amount'],
         currency=data.get('currency', 'NGN'),
-        payment_method=data.get('payment_method', 'WemaPay'),
+        payment_method='ALAT Authenticator',
         transaction_ref=transaction_ref,
+        narration=data.get('narration'),
         status='PENDING'
     )
     db.session.add(payment)
     db.session.commit()
 
     payment_service = PaymentService()
-    result = payment_service.process_payment(payment)
+    result = payment_service.init_payment(payment)
+
+    if result.get('success'):
+        payment.status = 'PENDING'
+        payment.alat_consent_id = result.get('consent_id')
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'data': payment.to_dict(),
+            'consent_required': result.get('consent_required', False),
+            'provider': result.get('provider'),
+            'message': 'Payment initiated. Approve the debit in your ALAT app.'
+        }), 201
+
+    payment.status = 'FAILED'
+    db.session.commit()
+    return jsonify({
+        'success': False,
+        'message': result.get('message', 'Payment could not be initiated'),
+        'error': result.get('error', 'PAYMENT_INIT_FAILED'),
+        'data': payment.to_dict()
+    }), 502
+
+
+@payments_bp.route('/<int:payment_id>/verify', methods=['POST'])
+@jwt_required()
+def verify_payment(payment_id):
+    payment = Payment.query.get_or_404(payment_id)
+    customer_id = int(get_jwt_identity())
+    if payment.customer_id != customer_id:
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+
+    if payment.status == 'SUCCESSFUL':
+        return jsonify({'success': True, 'data': payment.to_dict(), 'message': 'Payment already confirmed'})
+
+    payment_service = PaymentService()
+    result = payment_service.verify_payment(payment)
 
     if result.get('success'):
         payment.status = 'SUCCESSFUL'
+        payment.platform_reference = result.get('platform_reference')
         payment.paid_at = datetime.utcnow()
     else:
-        payment.status = 'FAILED'
+        payment.status = result.get('status', 'FAILED')
+        payment.platform_reference = result.get('platform_reference')
 
     db.session.commit()
-
     return jsonify({
-        'success': True,
+        'success': result.get('success', False),
         'data': payment.to_dict(),
-        'message': 'Payment processed'
-    }), 201
+        'message': result.get('message', 'Payment verification incomplete')
+    })
 
 
 @payments_bp.route('/', methods=['GET'])

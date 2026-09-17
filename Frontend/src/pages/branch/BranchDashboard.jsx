@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { StatusBadge } from '../../components/ui/Elements';
+import Reveal from '../../components/ScrollReveal';
+import { StatusBadge, LoadingPage, Card, CardTitle } from '../../components/ui/Elements';
 
 export default function BranchDashboard() {
   const { user } = useAuth();
@@ -40,89 +41,97 @@ export default function BranchDashboard() {
     setQueue(res.data);
   };
 
-  if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#0C2D57] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading) return <LoadingPage />;
+
+  const stats = [
+    { label: 'Waiting', value: queue.total_waiting, color: 'text-primary', icon: 'hourglass_top' },
+    { label: 'Called', value: queue.called?.length || 0, color: 'text-primary-container', icon: 'campaign' },
+    { label: 'In Service', value: queue.in_service?.length || 0, color: 'text-tertiary', icon: 'support_agent' },
+    { label: "Today's Appointments", value: appointments.filter(a => a.status === 'SCHEDULED').length, color: 'text-on-surface', icon: 'event_available' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Branch Dashboard</h1>
-        <p className="text-gray-500 text-sm">Manage queue, appointments, and customer service</p>
-      </div>
+      <Reveal direction="down" className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <span className="font-data-mono-xs text-xs uppercase text-primary font-semibold tracking-wider">Branch operations</span>
+          <h1 className="font-headline-md text-2xl md:text-3xl font-bold text-on-surface tracking-tight">Branch Dashboard</h1>
+          <p className="text-on-surface-variant text-sm">Manage queue, appointments, and customer service</p>
+        </div>
+        <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-fixed/40 text-tertiary font-data-mono-xs text-xs font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span> Live queue active
+        </span>
+      </Reveal>
 
       {/* Queue Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border border-gray-200 rounded-xl p-5 text-center">
-          <div className="text-3xl font-bold text-yellow-600">{queue.total_waiting}</div>
-          <div className="text-sm text-gray-500">Waiting</div>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-5 text-center">
-          <div className="text-3xl font-bold text-purple-600">{queue.called?.length || 0}</div>
-          <div className="text-sm text-gray-500">Called</div>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-5 text-center">
-          <div className="text-3xl font-bold text-blue-600">{queue.in_service?.length || 0}</div>
-          <div className="text-sm text-gray-500">In Service</div>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-5 text-center">
-          <div className="text-3xl font-bold text-[#0C2D57]">{appointments.filter(a => a.status === 'SCHEDULED').length}</div>
-          <div className="text-sm text-gray-500">Today's Appointments</div>
-        </div>
+        {stats.map((s, i) => (
+          <Reveal key={s.label} delay={i * 80} className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-1">
+              <span className="material-symbols-outlined text-outline-variant text-[20px]">{s.icon}</span>
+              <div className={`text-3xl font-bold ${s.color} font-data-mono`}>{s.value}</div>
+            </div>
+            <div className="text-sm text-on-surface-variant">{s.label}</div>
+          </Reveal>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Queue */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Live Queue</h3>
+        <Card delay={100}>
+          <CardTitle icon="confirmation_number">Live Queue</CardTitle>
           {queue.waiting?.length === 0 && queue.called?.length === 0 && queue.in_service?.length === 0 ? (
-            <p className="text-sm text-gray-500">No customers in queue</p>
+            <p className="text-sm text-on-surface-variant">No customers in queue</p>
           ) : (
             <div className="space-y-3">
-              {[...(queue.called || []), ...(queue.in_service || []), ...(queue.waiting || [])].map(t => (
-                <div key={t.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              {[...(queue.called || []), ...(queue.in_service || []), ...(queue.waiting || [])].map((t, i) => (
+                <Reveal key={t.id} delay={Math.min(i * 50, 250)}
+                  className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/30">
                   <div className="flex items-center gap-3">
-                    <div className="font-mono font-bold text-[#0C2D57] w-20">{t.ticket_number}</div>
+                    <div className="font-data-mono font-bold text-primary w-20">{t.ticket_number}</div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{t.service?.name}</div>
-                      <div className="text-xs text-gray-500">Pos: {t.position} • Est: {t.estimated_service_time}</div>
+                      <div className="text-sm font-medium text-on-surface">{t.service?.name}</div>
+                      <div className="text-xs text-on-surface-variant">Pos: {t.position} • Est: {t.estimated_service_time}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={t.status} />
                     {t.status === 'WAITING' && (
-                      <button onClick={() => callNext(t.id)} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded hover:bg-purple-200">Call</button>
+                      <button onClick={() => callNext(t.id)} className="text-xs bg-primary-fixed text-primary px-2.5 py-1 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors">Call</button>
                     )}
                     {t.status === 'CALLED' && (
-                      <button onClick={() => serveTicket(t.id)} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200">Serve</button>
+                      <button onClick={() => serveTicket(t.id)} className="text-xs bg-primary-fixed text-primary px-2.5 py-1 rounded-lg font-medium hover:bg-primary hover:text-white transition-colors">Serve</button>
                     )}
                     {t.status === 'IN_SERVICE' && (
-                      <button onClick={() => completeTicket(t.id)} className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200">Complete</button>
+                      <button onClick={() => completeTicket(t.id)} className="text-xs bg-tertiary-fixed text-tertiary px-2.5 py-1 rounded-lg font-medium hover:bg-tertiary hover:text-white transition-colors">Complete</button>
                     )}
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Appointments */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Appointments</h3>
+        <Card delay={180}>
+          <CardTitle icon="event_note">Appointments</CardTitle>
           {appointments.length === 0 ? (
-            <p className="text-sm text-gray-500">No appointments</p>
+            <p className="text-sm text-on-surface-variant">No appointments</p>
           ) : (
             <div className="space-y-3">
-              {appointments.slice(0, 8).map(a => (
-                <div key={a.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              {appointments.slice(0, 8).map((a, i) => (
+                <Reveal key={a.id} delay={Math.min(i * 50, 250)}
+                  className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/30">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">{a.service?.name}</div>
-                    <div className="text-xs text-gray-500">{a.appointment_date} at {a.appointment_time}</div>
+                    <div className="text-sm font-medium text-on-surface">{a.service?.name}</div>
+                    <div className="text-xs text-on-surface-variant">{a.appointment_date} at {a.appointment_time}</div>
                   </div>
                   <StatusBadge status={a.status} />
-                </div>
+                </Reveal>
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

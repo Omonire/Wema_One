@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const publicLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/services', label: 'Services' },
-  { to: '/branches', label: 'Branches' },
-  { to: '/about', label: 'About' },
+  { to: '#features', label: 'Features' },
+  { to: '#how-it-works', label: 'How It Works' },
+  { to: '#helpdesk', label: 'Helpdesk' },
+  { to: '#security', label: 'Security' },
 ];
 
 const customerLinks = [
@@ -41,6 +41,19 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const isLanding = location.pathname === '/';
+
+  useEffect(() => {
+    if (!isLanding) return;
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isLanding]);
+
+  const overHero = isLanding && !scrolled;
 
   const getLinks = () => {
     if (!user) return publicLinks;
@@ -50,91 +63,102 @@ export default function Navbar() {
   };
 
   const links = getLinks();
-  const isLanding = location.pathname === '/';
+
+  // On the landing page, hash links scroll in-place; from other pages, route home first.
+  const resolveHref = (to) => (to.startsWith('#') && !isLanding ? `/${to}` : to);
+
+  const navBg = overHero
+    ? 'bg-transparent border-transparent'
+    : isLanding
+      ? 'bg-surface-container-lowest/85 backdrop-blur-md border-outline-variant/30'
+      : 'bg-white border-gray-200';
+
+  const brandText = overHero ? 'text-primary-fixed-dim' : isLanding ? 'text-primary' : 'text-[#0F172A]';
+  const bodyText = overHero ? 'text-primary-fixed-dim hover:text-white' : isLanding ? 'text-primary hover:text-primary-container' : 'text-gray-600 hover:text-gray-900';
+  const custName = overHero ? 'text-primary-fixed-dim' : isLanding ? 'text-primary' : 'text-gray-900';
+  const custRole = overHero ? 'text-white/60' : isLanding ? 'text-on-surface-variant' : 'text-gray-400';
+  const menuBtn = overHero ? 'text-primary-fixed-dim' : isLanding ? 'text-primary' : 'text-gray-900';
+  const badge = overHero
+    ? 'bg-primary-fixed-dim/15 text-primary-fixed-dim border border-primary-fixed-dim/30'
+    : 'bg-surface-container text-primary';
 
   return (
-    <nav className={`${isLanding ? 'bg-surface-container-lowest/80 backdrop-blur-xl border-outline-variant/50' : 'bg-white border-gray-200'} border-b sticky top-0 z-50`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-on-primary font-bold text-sm font-mono">W</span>
-              </div>
-              <span className={`text-xl font-bold font-headline ${isLanding ? 'text-on-surface' : 'text-[#0F172A]'}`}>WemaOne</span>
-            </Link>
-            <div className="hidden lg:flex gap-1">
-              {links.map(link => (
-                <Link key={link.to} to={link.to}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    location.pathname === link.to
-                      ? isLanding ? 'bg-primary/10 text-primary' : 'bg-[#0F172A]/5 text-[#0F172A]'
-                      : isLanding ? 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low' : 'text-gray-600 hover:text-[#0F172A] hover:bg-gray-50'
-                  }`}>
-                  {link.label}
-                </Link>
-              ))}
+    <nav className={`${navBg} border-b sticky top-0 z-50 transition-colors duration-300`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between gap-6">
+        <div className="flex items-center gap-4 shrink-0">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm font-mono">L</span>
             </div>
-          </div>
-          <div className="hidden lg:flex items-center gap-4">
-            {user ? (
-              <>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-primary-container rounded-full flex items-center justify-center">
-                    <span className="text-on-primary text-xs font-bold">{user.first_name?.[0]}{user.last_name?.[0]}</span>
-                  </div>
-                  <div>
-                    <div className={`text-sm font-medium ${isLanding ? 'text-on-surface' : 'text-gray-900'}`}>{user.first_name}</div>
-                    <div className={`text-[11px] ${isLanding ? 'text-on-surface-variant' : 'text-gray-400'}`}>{user.role.replace(/_/g, ' ')}</div>
-                  </div>
+            <span className={`text-xl font-bold tracking-tight font-headline-md ${brandText}`}>Luma</span>
+          </Link>
+          <span className={`hidden sm:inline-flex px-2 py-0.5 rounded-md font-data-mono-xs text-xs font-semibold uppercase tracking-wider ${badge}`}>Enterprise</span>
+        </div>
+
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {links.map(link => (
+            <a key={link.to} href={resolveHref(link.to)}
+              className={`transition-colors ${bodyText}`}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-4 shrink-0">
+          {user ? (
+            <>
+              <div className="hidden sm:flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-primary-container rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">{user.first_name?.[0]}{user.last_name?.[0]}</span>
                 </div>
-                <button onClick={logout} className={`text-sm px-3 py-1.5 rounded-lg border transition-all duration-200 ${isLanding ? 'text-on-surface-variant border-outline-variant/60 hover:text-error hover:border-error' : 'text-gray-500 border-gray-200 hover:text-red-600 hover:border-red-200'}`}>
-                  Logout
-                </button>
-              </>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${isLanding ? 'text-on-surface-variant hover:text-on-surface' : 'text-gray-600 hover:text-[#0F172A]'}`}>
-                  Login
-                </Link>
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 text-sm font-semibold bg-primary-container text-on-primary px-5 py-2 rounded-lg hover:bg-primary transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)]">
-                  Register
-                </Link>
+                <div>
+                  <div className={`text-sm font-medium ${custName}`}>{user.first_name}</div>
+                  <div className={`text-[11px] ${custRole}`}>{user.role.replace(/_/g, ' ')}</div>
+                </div>
+              </div>
+              <button onClick={logout} className={`text-sm px-3 py-1.5 rounded-lg border transition-all ${
+                overHero ? 'text-primary-fixed-dim border-primary-fixed-dim/30 hover:text-white' : isLanding ? 'text-primary border-outline-variant/60 hover:text-primary-container' : 'text-gray-500 border-gray-200 hover:text-red-600'
+              }`}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className={`hidden sm:inline-flex items-center text-sm font-medium px-3 py-1.5 transition-colors ${overHero ? 'text-primary-fixed-dim hover:text-white' : bodyText}`}>Sign In</Link>
+              <Link to="/register" className="inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)]">
+                <span>Get Started Free</span>
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </Link>
+            </>
+          )}
+        </div>
+
+        <button onClick={() => setMobileOpen(!mobileOpen)} className={`md:hidden p-2 rounded-lg ${menuBtn}`}>
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className={`md:hidden pb-4 border-t bg-surface-container-lowest ${isLanding ? 'border-outline-variant/30' : 'border-gray-100'}`}>
+          <div className="flex flex-col gap-1 pt-3 px-6">
+            {links.map(link => (
+              <a key={link.to} href={resolveHref(link.to)} onClick={() => setMobileOpen(false)}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface">
+                {link.label}
+              </a>
+            ))}
+            {!user && (
+              <div className="flex gap-3 mt-2">
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-sm font-medium text-on-surface-variant">Sign In</Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="text-sm font-semibold bg-primary-container text-white px-4 py-1.5 rounded-lg">Get Started Free</Link>
               </div>
             )}
+            {user && (
+              <button onClick={() => { logout(); setMobileOpen(false); }} className="text-sm text-error px-3 py-2 text-left">Logout</button>
+            )}
           </div>
-          {/* Mobile toggle */}
-          <button onClick={() => setMobileOpen(!mobileOpen)} className={`lg:hidden p-2 rounded-lg ${isLanding ? 'text-on-surface' : 'text-gray-900'}`}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
-        {/* Mobile menu */}
-        {mobileOpen && (
-          <div className={`lg:hidden pb-4 border-t ${isLanding ? 'border-outline-variant/40' : 'border-gray-100'}`}>
-            <div className="flex flex-col gap-1 pt-3">
-              {links.map(link => (
-                <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium ${
-                    location.pathname === link.to
-                      ? isLanding ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-[#0F172A]'
-                      : isLanding ? 'text-on-surface-variant' : 'text-gray-600'
-                  }`}>
-                  {link.label}
-                </Link>
-              ))}
-              {!user && (
-                <div className="flex gap-3 mt-2 px-3">
-                  <Link to="/login" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${isLanding ? 'text-on-surface-variant' : 'text-gray-600'}`}>Login</Link>
-                  <Link to="/register" onClick={() => setMobileOpen(false)} className="text-sm font-semibold bg-primary-container text-on-primary px-4 py-1.5 rounded-lg">Register</Link>
-                </div>
-              )}
-              {user && (
-                <button onClick={() => { logout(); setMobileOpen(false); }} className="text-sm text-error px-3 py-2 text-left">Logout</button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </nav>
   );
 }
