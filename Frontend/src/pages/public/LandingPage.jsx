@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../../components/ScrollReveal';
 
@@ -42,6 +42,13 @@ const FAQS = [
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
+  const videoRef = useRef(null);
+  const [videoSpeed, setVideoSpeed] = useState(1);
+  const [videoOk, setVideoOk] = useState(true);
+
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.playbackRate = videoSpeed;
+  }, [videoSpeed]);
 
   // Auto-advance the lifecycle rail like a live demo (pauses longer on the final step).
   useEffect(() => {
@@ -60,17 +67,47 @@ export default function LandingPage() {
       <section id="top" className="relative flex min-h-[100svh] items-end overflow-hidden bg-[#0A0D14]">
         {/* Video Background */}
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
-          onError={(e) => e.currentTarget.remove()}
+          onError={(e) => {
+            setVideoOk(false);
+            e.currentTarget.remove();
+          }}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
           aria-hidden="true"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
+
+        {/* Hero video speed toggle */}
+        {videoOk && (
+          <div
+            role="group"
+            aria-label="Hero video playback speed"
+            className="absolute bottom-6 right-6 z-20 inline-flex items-center gap-1 rounded-lg border border-white/25 bg-white/10 p-1 backdrop-blur-sm"
+          >
+            <span className="material-symbols-outlined px-1.5 text-[16px] text-white/60" aria-hidden="true">
+              speed
+            </span>
+            {[0.5, 1, 1.5, 2].map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setVideoSpeed(s)}
+                aria-pressed={videoSpeed === s}
+                className={`h-7 min-w-9 rounded-md px-1.5 font-data-mono-xs text-[11px] font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white ${
+                  videoSpeed === s ? 'bg-white text-[#0A0D14]' : 'text-white/70 hover:bg-white/15 hover:text-white'
+                }`}
+              >
+                {s}x
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Overlays: flat tint + bottom-up gradient for legibility */}
         <div className="absolute inset-0 bg-black/40 pointer-events-none" aria-hidden="true"></div>
