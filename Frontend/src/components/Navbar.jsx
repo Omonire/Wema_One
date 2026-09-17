@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 const publicLinks = [
   { to: '/', label: 'Home' },
@@ -38,6 +40,7 @@ const adminLinks = [
 export default function Navbar() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const getLinks = () => {
     if (!user) return publicLinks;
@@ -47,49 +50,90 @@ export default function Navbar() {
   };
 
   const links = getLinks();
+  const isLanding = location.pathname === '/';
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className={`${isLanding ? 'bg-[#0F172A]/80 backdrop-blur-xl border-slate-800/50' : 'bg-white border-gray-200'} border-b sticky top-0 z-50`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#0C2D57] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">W</span>
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-[#F59E0B] rounded-lg flex items-center justify-center">
+                <span className="text-[#0F172A] font-bold text-sm">W</span>
               </div>
-              <span className="text-xl font-bold text-[#0C2D57]">WemaOne</span>
+              <span className={`text-xl font-bold ${isLanding ? 'text-white' : 'text-[#0F172A]'}`}>WemaOne</span>
             </Link>
-            <div className="hidden md:flex gap-6">
+            <div className="hidden lg:flex gap-1">
               {links.map(link => (
                 <Link key={link.to} to={link.to}
-                  className={`text-sm font-medium transition-colors ${location.pathname === link.to ? 'text-[#0C2D57] font-semibold' : 'text-gray-600 hover:text-[#0C2D57]'}`}>
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    location.pathname === link.to
+                      ? isLanding ? 'bg-white/10 text-[#F59E0B]' : 'bg-[#0F172A]/5 text-[#0F172A]'
+                      : isLanding ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-gray-600 hover:text-[#0F172A] hover:bg-gray-50'
+                  }`}>
                   {link.label}
                 </Link>
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             {user ? (
               <>
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="w-8 h-8 bg-[#0C2D57] rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-medium">{user.first_name?.[0]}{user.last_name?.[0]}</span>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center">
+                    <span className="text-[#0F172A] text-xs font-bold">{user.first_name?.[0]}{user.last_name?.[0]}</span>
                   </div>
-                  <div className="text-sm">
-                    <div className="font-medium text-gray-900">{user.first_name}</div>
-                    <div className="text-xs text-gray-500">{user.role.replace(/_/g, ' ')}</div>
+                  <div>
+                    <div className={`text-sm font-medium ${isLanding ? 'text-white' : 'text-gray-900'}`}>{user.first_name}</div>
+                    <div className={`text-[11px] ${isLanding ? 'text-slate-500' : 'text-gray-400'}`}>{user.role.replace(/_/g, ' ')}</div>
                   </div>
                 </div>
-                <button onClick={logout} className="text-sm text-gray-500 hover:text-red-600 border border-gray-200 px-3 py-1.5 rounded-lg">Logout</button>
+                <button onClick={logout} className={`text-sm px-3 py-1.5 rounded-lg border transition-all duration-200 ${isLanding ? 'text-slate-400 border-slate-700 hover:text-white hover:border-slate-500' : 'text-gray-500 border-gray-200 hover:text-red-600 hover:border-red-200'}`}>
+                  Logout
+                </button>
               </>
             ) : (
-              <div className="flex gap-3">
-                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-[#0C2D57]">Login</Link>
-                <Link to="/register" className="text-sm font-medium bg-[#0C2D57] text-white px-4 py-2 rounded-lg hover:bg-[#0A2445]">Register</Link>
+              <div className="flex items-center gap-3">
+                <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 ${isLanding ? 'text-slate-300 hover:text-white' : 'text-gray-600 hover:text-[#0F172A]'}`}>
+                  Login
+                </Link>
+                <Link to="/register" className="text-sm font-medium bg-[#F59E0B] text-[#0F172A] px-5 py-2 rounded-lg hover:bg-[#D97706] transition-all duration-200">
+                  Register
+                </Link>
               </div>
             )}
           </div>
+          {/* Mobile toggle */}
+          <button onClick={() => setMobileOpen(!mobileOpen)} className={`lg:hidden p-2 rounded-lg ${isLanding ? 'text-white' : 'text-gray-900'}`}>
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className={`lg:hidden pb-4 border-t ${isLanding ? 'border-slate-800' : 'border-gray-100'}`}>
+            <div className="flex flex-col gap-1 pt-3">
+              {links.map(link => (
+                <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium ${
+                    location.pathname === link.to
+                      ? isLanding ? 'bg-white/10 text-[#F59E0B]' : 'bg-gray-100 text-[#0F172A]'
+                      : isLanding ? 'text-slate-400' : 'text-gray-600'
+                  }`}>
+                  {link.label}
+                </Link>
+              ))}
+              {!user && (
+                <div className="flex gap-3 mt-2 px-3">
+                  <Link to="/login" onClick={() => setMobileOpen(false)} className={`text-sm font-medium ${isLanding ? 'text-slate-300' : 'text-gray-600'}`}>Login</Link>
+                  <Link to="/register" onClick={() => setMobileOpen(false)} className="text-sm font-medium bg-[#F59E0B] text-[#0F172A] px-4 py-1.5 rounded-lg">Register</Link>
+                </div>
+              )}
+              {user && (
+                <button onClick={() => { logout(); setMobileOpen(false); }} className="text-sm text-red-500 px-3 py-2 text-left">Logout</button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

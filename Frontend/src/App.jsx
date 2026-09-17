@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -55,63 +55,65 @@ function DashboardRouter() {
   return <Navigate to="/customer" />;
 }
 
+function Layout() {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+  return (
+    <div className={`min-h-screen flex flex-col ${isLanding ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+      <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:id" element={<ServiceDetailPage />} />
+          <Route path="/branches" element={<BranchesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/help" element={<HelpPage />} />
+          <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+
+          <Route path="/dashboard" element={<PrivateRoute><DashboardRouter /></PrivateRoute>} />
+
+          <Route path="/customer" element={<PrivateRoute roles={['CUSTOMER']}><CustomerDashboard /></PrivateRoute>} />
+          <Route path="/customer/queue" element={<PrivateRoute roles={['CUSTOMER']}><QueuePage /></PrivateRoute>} />
+          <Route path="/customer/documents" element={<PrivateRoute roles={['CUSTOMER']}><DocumentsPage /></PrivateRoute>} />
+          <Route path="/customer/payments" element={<PrivateRoute roles={['CUSTOMER']}><PaymentsPage /></PrivateRoute>} />
+          <Route path="/customer/feedback" element={<PrivateRoute roles={['CUSTOMER']}><FeedbackPage /></PrivateRoute>} />
+
+          <Route path="/branch" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchDashboard /></PrivateRoute>} />
+          <Route path="/branch/appointments" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchAppointmentsPage /></PrivateRoute>} />
+          <Route path="/branch/documents" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchDocumentsPage /></PrivateRoute>} />
+          <Route path="/branch/feedback" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchFeedbackPage /></PrivateRoute>} />
+          <Route path="/branch/connect" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchConnectPage /></PrivateRoute>} />
+
+          <Route path="/admin" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminDashboard /></PrivateRoute>} />
+          <Route path="/admin/analytics" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminAnalyticsPage /></PrivateRoute>} />
+          <Route path="/admin/branches" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminBranchesPage /></PrivateRoute>} />
+          <Route path="/admin/services" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminServicesPage /></PrivateRoute>} />
+          <Route path="/admin/users" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminUsersPage /></PrivateRoute>} />
+          <Route path="/admin/feedback" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminFeedbackPage /></PrivateRoute>} />
+          <Route path="/admin/documents" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminDocumentsPage /></PrivateRoute>} />
+          <Route path="/admin/branch-connect" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><BranchConnectPage /></PrivateRoute>} />
+
+          <Route path="*" element={
+            <div className="text-center py-20">
+              <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
+              <p className="text-gray-500 mb-6">Page not found</p>
+              <a href="/" className="bg-[#0C2D57] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0A2445]">Go Home</a>
+            </div>
+          } />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              {/* Public */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/services" element={<ServicesPage />} />
-              <Route path="/services/:id" element={<ServiceDetailPage />} />
-              <Route path="/branches" element={<BranchesPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/help" element={<HelpPage />} />
-              <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-              <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-
-              {/* Dashboard Router */}
-              <Route path="/dashboard" element={<PrivateRoute><DashboardRouter /></PrivateRoute>} />
-
-              {/* Customer */}
-              <Route path="/customer" element={<PrivateRoute roles={['CUSTOMER']}><CustomerDashboard /></PrivateRoute>} />
-              <Route path="/customer/queue" element={<PrivateRoute roles={['CUSTOMER']}><QueuePage /></PrivateRoute>} />
-              <Route path="/customer/documents" element={<PrivateRoute roles={['CUSTOMER']}><DocumentsPage /></PrivateRoute>} />
-              <Route path="/customer/payments" element={<PrivateRoute roles={['CUSTOMER']}><PaymentsPage /></PrivateRoute>} />
-              <Route path="/customer/feedback" element={<PrivateRoute roles={['CUSTOMER']}><FeedbackPage /></PrivateRoute>} />
-
-              {/* Branch */}
-              <Route path="/branch" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchDashboard /></PrivateRoute>} />
-              <Route path="/branch/appointments" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchAppointmentsPage /></PrivateRoute>} />
-              <Route path="/branch/documents" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchDocumentsPage /></PrivateRoute>} />
-              <Route path="/branch/feedback" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchFeedbackPage /></PrivateRoute>} />
-              <Route path="/branch/connect" element={<PrivateRoute roles={['BRANCH_OFFICER', 'BRANCH_MANAGER']}><BranchConnectPage /></PrivateRoute>} />
-
-              {/* Admin */}
-              <Route path="/admin" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminDashboard /></PrivateRoute>} />
-              <Route path="/admin/analytics" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminAnalyticsPage /></PrivateRoute>} />
-              <Route path="/admin/branches" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminBranchesPage /></PrivateRoute>} />
-              <Route path="/admin/services" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminServicesPage /></PrivateRoute>} />
-              <Route path="/admin/users" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminUsersPage /></PrivateRoute>} />
-              <Route path="/admin/feedback" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminFeedbackPage /></PrivateRoute>} />
-              <Route path="/admin/documents" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><AdminDocumentsPage /></PrivateRoute>} />
-              <Route path="/admin/branch-connect" element={<PrivateRoute roles={['ADMIN', 'SUPER_ADMIN']}><BranchConnectPage /></PrivateRoute>} />
-
-              {/* 404 */}
-              <Route path="*" element={
-                <div className="text-center py-20">
-                  <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
-                  <p className="text-gray-500 mb-6">Page not found</p>
-                  <a href="/" className="bg-[#0C2D57] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0A2445]">Go Home</a>
-                </div>
-              } />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <Layout />
       </BrowserRouter>
     </AuthProvider>
   );
