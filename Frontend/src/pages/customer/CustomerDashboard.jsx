@@ -43,19 +43,27 @@ export default function CustomerDashboard() {
           </div>
           <span className="text-sm font-medium text-gray-900">Discover Services</span>
         </Link>
-        <Link to="/dashboard/queue" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
+        <Link to="/customer/queue" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
           <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-2">
             <span className="text-yellow-600 text-lg">📋</span>
           </div>
           <span className="text-sm font-medium text-gray-900">Join Queue</span>
         </Link>
-        <Link to="/dashboard/documents" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
+        <Link to="/customer/documents" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
           <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
             <span className="text-green-600 text-lg">📄</span>
           </div>
           <span className="text-sm font-medium text-gray-900">Upload Docs</span>
         </Link>
-        <Link to="/dashboard/feedback" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
+        <Link to="/customer/payments" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
+          <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <span className="text-emerald-600 text-lg">💳</span>
+          </div>
+          <span className="text-sm font-medium text-gray-900">Payments</span>
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-8">
+        <Link to="/customer/feedback" className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition text-center">
           <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
             <span className="text-purple-600 text-lg">💬</span>
           </div>
