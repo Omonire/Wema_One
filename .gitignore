@@ -5,6 +5,7 @@ Backend/**/__pycache__/
 Backend/*.pyc
 Backend/wemaone.db
 Backend/*.db
+Backend/instance/
 
 Frontend/node_modules/
 Frontend/dist/
