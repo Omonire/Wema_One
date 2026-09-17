@@ -226,3 +226,100 @@ def test_create_branchconnect_post(client):
 def test_unauthorized_access(client):
     resp = client.get('/api/users/')
     assert resp.status_code == 401
+
+
+def test_system_endpoints(client):
+    resp = client.get('/api/system/health')
+    assert resp.status_code == 200
+    assert resp.get_json()['data']['status'] == 'ok'
+
+    info = client.get('/api/system/info')
+    assert info.status_code == 200
+    assert info.get_json()['data']['name'] == 'Luma API'
+
+    stats = client.get('/api/system/stats')
+    assert stats.status_code == 200
+    assert 'users' in stats.get_json()['data']
+
+
+def test_notifications_flow(client):
+    client.post('/api/auth/register', json={
+        'email': 'notif_test@example.com',
+        'password': 'pass123',
+        'first_name': 'Notif',
+        'last_name': 'Test'
+    })
+    login = client.post('/api/auth/login', json={'email': 'notif_test@example.com', 'password': 'pass123'})
+    token = login.get_json()['data']['token']
+    headers = {'Authorization': f'Bearer {token}'}
+
+    unread = client.get('/api/notifications/unread-count', headers=headers)
+    assert unread.status_code == 200
+    assert unread.get_json()['data']['unread'] == 0
+
+    listed = client.get('/api/notifications/', headers=headers)
+    assert listed.status_code == 200
+    assert listed.get_json()['success'] is True
+
+
+def test_audit_logs_admin_only(client):
+    client.post('/api/auth/register', json={
+        'email': 'audit_cust@example.com',
+        'password': 'pass123',
+        'first_name': 'Audit',
+        'last_name': 'Cust'
+    })
+    login = client.post('/api/auth/login', json={'email': 'audit_cust@example.com', 'password': 'pass123'})
+    cust_token = login.get_json()['data']['token']
+
+    forbidden = client.get('/api/audit-logs/', headers={'Authorization': f'Bearer {cust_token}'})
+    assert forbidden.status_code == 403
+
+    client.post('/api/auth/register', json={
+        'email': 'audit_admin@example.com',
+        'password': 'pass123',
+        'first_name': 'Audit',
+        'last_name': 'Admin',
+        'role': 'SUPER_ADMIN'
+    })
+    admin_login = client.post('/api/auth/login', json={'email': 'audit_admin@example.com', 'password': 'pass123'})
+    admin_token = admin_login.get_json()['data']['token']
+
+    # login writes an audit log; ensure fetchable by admin
+    resp = client.get('/api/audit-logs/', headers={'Authorization': f'Bearer {admin_token}'})
+    assert resp.status_code == 200
+    assert resp.get_json()['success'] is True
+
+
+def test_social_studio_admin_only(client):
+    client.post('/api/auth/register', json={
+        'email': 'ss_cust@example.com',
+        'password': 'pass123',
+        'first_name': 'SS',
+        'last_name': 'Cust'
+    })
+    login = client.post('/api/auth/login', json={'email': 'ss_cust@example.com', 'password': 'pass123'})
+    cust_token = login.get_json()['data']['token']
+
+    forbidden = client.get('/api/social-studio/overview', headers={'Authorization': f'Bearer {cust_token}'})
+    assert forbidden.status_code == 403
+
+    admin_reg = client.post('/api/auth/register', json={
+        'email': 'ss_admin@example.com',
+        'password': 'pass123',
+        'first_name': 'SS',
+        'last_name': 'Admin',
+        'role': 'SUPER_ADMIN'
+    })
+    assert admin_reg.status_code == 201
+    admin_login = client.post('/api/auth/login', json={'email': 'ss_admin@example.com', 'password': 'pass123'})
+    admin_token = admin_login.get_json()['data']['token']
+
+    overview = client.get('/api/social-studio/overview', headers={'Authorization': f'Bearer {admin_token}'})
+    assert overview.status_code == 200
+    assert 'sentiment' in overview.get_json()['data']
+
+    analyze = client.post('/api/social-studio/analyze', json={'content': 'The service was terrible and slow'},
+                          headers={'Authorization': f'Bearer {admin_token}'})
+    assert analyze.status_code == 200
+    assert analyze.get_json()['data']['sentiment'] == 'Negative'

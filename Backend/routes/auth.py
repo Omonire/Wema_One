@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
+from services.audit_service import log_audit
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -54,6 +55,7 @@ def login():
         return jsonify({'success': False, 'message': 'Account deactivated'}), 403
 
     token = create_access_token(identity=str(user.id))
+    log_audit(user_id=user.id, action='LOGIN', resource_type='auth', details={'email': user.email})
     return jsonify({
         'success': True,
         'data': {'user': user.to_dict(), 'token': token},

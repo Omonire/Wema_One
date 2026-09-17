@@ -11,6 +11,7 @@ class Notification(db.Model):
     message = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(30), default='INFO')
     is_read = db.Column(db.Boolean, default=False)
+    read_at = db.Column(db.DateTime)
     link = db.Column(db.String(300))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -22,6 +23,7 @@ class Notification(db.Model):
             'message': self.message,
             'type': self.type,
             'is_read': self.is_read,
+            'read_at': self.read_at.isoformat() if self.read_at else None,
             'link': self.link,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

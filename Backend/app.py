@@ -34,10 +34,44 @@ def create_app(config_name=None):
 
     with app.app_context():
         db.create_all()
+        _ensure_columns(app)
 
     return app
 
 
+def _ensure_columns(app):
+    """Lightweight migration for SQLite: add missing columns so existing DBs keep working."""
+    if not app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
+        return
+    with app.app_context():
+        inspector = db.inspect(db.engine)
+        existing = {}
+
+        def cols(table):
+            if table not in existing:
+                existing[table] = {c['name'] for c in inspector.get_columns(table)}
+            return existing[table]
+
+        additions = {
+            'payments': [
+                ("alat_consent_id", "VARCHAR(120)"),
+                ("platform_reference", "VARCHAR(120)"),
+                ("narration", "VARCHAR(255)"),
+            ],
+            'notifications': [
+                ("read_at", "DATETIME"),
+            ],
+        }
+        for table, cols_list in additions.items():
+            try:
+                for col, coltype in cols_list:
+                    if col not in cols(table):
+                        db.session.execute(db.text(f'ALTER TABLE {table} ADD COLUMN {col} {coltype}'))
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+
+
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, port=5000)
+    app.run(debug=app.config.get('DEBUG', False), port=5000)

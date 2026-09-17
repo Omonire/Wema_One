@@ -1,7 +1,7 @@
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function request(method, path, data = null, isFormData = false) {
-  const token = localStorage.getItem('wemaone_token');
+  const token = localStorage.getItem('luma_token');
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
   if (!isFormData) headers['Content-Type'] = 'application/json';

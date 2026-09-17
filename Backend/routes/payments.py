@@ -5,6 +5,7 @@ from extensions import db
 from models.payment import Payment
 from models.user import User
 from services.payment_service import PaymentService
+from services.audit_service import log_audit
 
 payments_bp = Blueprint('payments', __name__)
 
@@ -45,6 +46,8 @@ def create_payment():
         payment.status = 'PENDING'
         payment.alat_consent_id = result.get('consent_id')
         db.session.commit()
+        log_audit(user_id=customer_id, action='PAYMENT_INITIATED', resource_type='payment', resource_id=payment.id,
+                  details={'ref': payment.transaction_ref, 'amount': payment.amount, 'provider': 'ALAT Authenticator'})
         return jsonify({
             'success': True,
             'data': payment.to_dict(),
@@ -86,6 +89,9 @@ def verify_payment(payment_id):
         payment.platform_reference = result.get('platform_reference')
 
     db.session.commit()
+    log_audit(user_id=customer_id, action='PAYMENT_VERIFIED', resource_type='payment', resource_id=payment.id,
+              details={'ref': payment.transaction_ref, 'status': payment.status,
+                       'platform_reference': payment.platform_reference})
     return jsonify({
         'success': result.get('success', False),
         'data': payment.to_dict(),
