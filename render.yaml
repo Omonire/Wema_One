@@ -1,0 +1,52 @@
+databases:
+  - name: luma-db
+    databaseName: luma
+    user: luma
+    plan: free
+
+services:
+  - type: web
+    name: luma-api
+    runtime: python
+    plan: free
+    rootDir: Backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /api/system/health
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: luma-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      # Set to your Vercel URL after the frontend is deployed (e.g. https://luma.vercel.app)
+      - key: CORS_ORIGINS
+        sync: false
+      # 1 = seed demo data on first boot
+      - key: SEED_DATA
+        value: "1"
+      - key: AI_ENABLED
+        value: "false"
+      - key: AI_PROVIDER
+        value: mock
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALAT_SANDBOX
+        value: "true"
+      - key: ALAT_BASE_URL
+        value: https://sandbox-api.wemabank.com/alat/authenticator
+      - key: ALAT_CLIENT_ID
+        sync: false
+      - key: ALAT_CLIENT_SECRET
+        sync: false
+      - key: ALAT_CALLBACK_URL
+        sync: false

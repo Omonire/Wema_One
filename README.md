@@ -195,8 +195,27 @@ Luma uses a deterministic **mock** provider by default (works offline, costs not
 
 ## Deployment
 
+### Backend on Render (API + PostgreSQL)
+
+1. Push this repo to GitHub.
+2. In Render: **New → Blueprint**, select the repo. Render reads `render.yaml` and creates:
+   - `luma-api` — Flask API (rootDir `Backend`, `gunicorn wsgi:app`)
+   - `luma-db` — free PostgreSQL
+3. When prompted, set the `sync: false` secrets: `CORS_ORIGINS` (your Vercel URL), `ALAT_CLIENT_ID`, `ALAT_CLIENT_SECRET`, and optionally `GROQ_API_KEY` / `GEMINI_API_KEY`.
+4. `SEED_DATA=1` seeds demo data on first boot (idempotent — skipped once data exists).
+5. Health check: `GET https://<luma-api>.onrender.com/api/system/health`
+
+### Frontend on Vercel
+
+1. In Vercel: **Add New → Project**, import the repo.
+2. Set **Root Directory** to `Frontend` (framework auto-detected as Vite).
+3. Add environment variable: `VITE_API_URL=https://<luma-api>.onrender.com/api`
+4. Deploy. `vercel.json` handles SPA routing while keeping `/assets`, `/videos` static.
+5. Copy the Vercel URL back into Render's `CORS_ORIGINS`, then redeploy the API.
+
+### Manual / other hosts
+
 ```bash
-# Production
 export FLASK_ENV=production
 export DATABASE_URL=postgresql://...
 export SECRET_KEY=...
@@ -207,7 +226,7 @@ export SEED_DATA=0
 gunicorn --bind 0.0.0.0:8000 wsgi:app
 ```
 
-Build the frontend with `npm run build` (output in `Frontend/dist`) and set `VITE_API_URL` to your API origin if not served behind a same-origin `/api` reverse proxy.
+> Note: Render's free web service cold-starts after inactivity and the free PostgreSQL instance expires after 90 days — upgrade for permanent production use.
 
 ## Known Limitations
 
