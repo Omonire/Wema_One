@@ -127,7 +127,7 @@ def seed(app, drop=True, only_if_empty=False):
             for req_name, req_desc, mandatory in (s.requirements if hasattr(s, '_temp_reqs') else []):
                 pass
 
-        for service_idx, (_, _, _, _, _, reqs) in enumerate(services_data):
+        for service_idx, (_, _, _, _, _, _, _, _, reqs) in enumerate(services_data):
             for req_name, req_desc, mandatory in reqs:
                 sr = ServiceRequirement(
                     service_id=services[service_idx].id,
