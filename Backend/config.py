@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,13 +15,20 @@ def _normalize_db_url(url):
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     # DATABASE_URL (PostgreSQL in production) takes priority; SQLite is the local fallback.
-    SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.getenv('DATABASE_URL')) or 'sqlite:///luma.db'
+    # On Render, if no DATABASE_URL is provided, use SQLite in the instance folder.
+    _db_url = _normalize_db_url(os.getenv('DATABASE_URL'))
+    if not _db_url:
+        # SQLite fallback - use instance folder for persistence on Render
+        _instance_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+        os.makedirs(_instance_dir, exist_ok=True)
+        _db_url = f'sqlite:///{os.path.join(_instance_dir, "luma.db")}'
+    SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SEED_DATA: 1 = seed demo data on first boot, 0 = never seed
     SEED_DATA = os.getenv('SEED_DATA', '0') == '1'
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'dev-jwt-secret-change-in-production')
-    JWT_ACCESS_TOKEN_EXPIRES = 86400
-    CORS_ORIGINS = [o.strip() for o in os.getenv('CORS_ORIGINS', 'http://localhost:5173').split(',') if o.strip()]
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
+    CORS_ORIGINS = [o.strip() for o in os.getenv('CORS_ORIGINS', 'http://localhost:5173,http://localhost:5174').split(',') if o.strip()]
     AI_ENABLED = os.getenv('AI_ENABLED', 'false').lower() == 'true'
     AI_PROVIDER = os.getenv('AI_PROVIDER', 'mock')
     GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
@@ -33,6 +41,11 @@ class Config:
     ALAT_CLIENT_ID = os.getenv('ALAT_CLIENT_ID', '')
     ALAT_CLIENT_SECRET = os.getenv('ALAT_CLIENT_SECRET', '')
     ALAT_CALLBACK_URL = os.getenv('ALAT_CALLBACK_URL', '')
+    
+    # Paystack fallback (used when ALAT is not configured)
+    PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY', '')
+    PAYSTACK_TIMEOUT = int(os.getenv('PAYSTACK_TIMEOUT', 30))
+    
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
     MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
 

@@ -1,4 +1,5 @@
 import os
+import random
 from services.ai_service import AIService
 
 
@@ -111,6 +112,3 @@ class DocumentVerificationService:
         else:
             notes.append('Document requires manual review.')
         return ' '.join(notes)
-
-
-import random

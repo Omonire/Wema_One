@@ -4,6 +4,17 @@ import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
 import { LoadingPage, PageHeader } from '../../components/ui/Elements';
 
+const ICON_MAP = {
+  'CreditCard': 'credit_card',
+  'Building2': 'business',
+  'Wallet': 'account_balance_wallet',
+  'ShieldCheck': 'verified_user',
+  'Landmark': 'account_balance',
+  'Fingerprint': 'fingerprint',
+  'WalletCards': 'wallet',
+  'ArrowRight': 'arrow_forward',
+};
+
 export default function ServicesPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,21 +44,65 @@ export default function ServicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {services.filter(s => s.category === cat).map((service, i) => (
               <Reveal key={service.id} delay={(i % 3) * 90} className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col">
-                <h3 className="font-bold text-on-surface mb-2">{service.name}</h3>
-                <p className="text-on-surface-variant text-sm mb-4">{service.description}</p>
-                <div className="flex items-center justify-between text-sm text-on-surface-variant mb-4">
-                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px] text-primary">schedule</span>~{service.estimated_time_minutes} min</span>
-                  <span className="font-data-mono font-semibold text-primary">{service.fee > 0 ? `₦${service.fee.toLocaleString()}` : 'Free'}</span>
+                {/* Service Header */}
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-primary text-xl">
+                      {ICON_MAP[service.icon] || 'services'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-on-surface mb-1">{service.name}</h3>
+                    {service.tagline && (
+                      <p className="text-xs text-primary font-medium italic">{service.tagline}</p>
+                    )}
+                  </div>
                 </div>
+                
+                <p className="text-on-surface-variant text-sm mb-3">{service.description}</p>
+                
+                {/* Features/Benefits */}
+                {service.features && service.features.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold text-on-surface-variant mb-2 tracking-wider">BENEFITS:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {service.features.map((feature, idx) => (
+                        <span key={idx} className="inline-flex items-center gap-1 text-xs bg-tertiary-container/30 text-tertiary px-2 py-1 rounded-full">
+                          <span className="material-symbols-outlined text-[12px]">check_circle</span>
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Time and Price */}
+                <div className="flex items-center justify-between text-sm text-on-surface-variant mb-4">
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[16px] text-primary">schedule</span>
+                    ~{service.estimated_time_minutes} min
+                  </span>
+                  <span className="font-data-mono font-semibold text-primary">
+                    {service.fee > 0 ? `₦${service.fee.toLocaleString()}` : 'Free'}
+                  </span>
+                </div>
+                
+                {/* Requirements */}
                 <div className="mb-4">
                   <p className="text-xs font-semibold text-on-surface-variant mb-2 tracking-wider">REQUIRED DOCUMENTS:</p>
-                  {service.requirements?.map((req, i) => (
+                  {service.requirements?.slice(0, 3).map((req, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm text-on-surface-variant mb-1">
-                      <span className={req.is_mandatory ? 'text-tertiary font-bold' : 'text-outline-variant'}>{req.is_mandatory ? '✓' : '○'}</span>
+                      <span className={req.is_mandatory ? 'text-tertiary font-bold' : 'text-outline-variant'}>
+                        {req.is_mandatory ? '✓' : '○'}
+                      </span>
                       <span>{req.name}</span>
                     </div>
                   ))}
+                  {service.requirements?.length > 3 && (
+                    <p className="text-xs text-on-surface-variant mt-1">+{service.requirements.length - 3} more</p>
+                  )}
                 </div>
+                
                 <Link to={`/services/${service.id}`}
                   className="mt-auto block text-center bg-primary-container hover:bg-primary text-white py-2 rounded-lg text-sm font-semibold transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)]">
                   Get Started

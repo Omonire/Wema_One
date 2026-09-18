@@ -48,7 +48,7 @@ def test_get_branches(client):
 def test_register_and_login(client):
     resp = client.post('/api/auth/register', json={
         'email': 'test_user@example.com',
-        'password': 'testpass123',
+        'password': 'TestPass123!!',
         'first_name': 'Test',
         'last_name': 'User'
     })
@@ -59,7 +59,7 @@ def test_register_and_login(client):
 
     resp2 = client.post('/api/auth/login', json={
         'email': 'test_user@example.com',
-        'password': 'testpass123'
+        'password': 'TestPass123!!'
     })
     data2 = resp2.get_json()
     assert resp2.status_code == 200
@@ -69,13 +69,13 @@ def test_register_and_login(client):
 def test_register_duplicate_email(client):
     client.post('/api/auth/register', json={
         'email': 'dup@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Dup',
         'last_name': 'Test'
     })
     resp = client.post('/api/auth/register', json={
         'email': 'dup@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Dup2',
         'last_name': 'Test'
     })
@@ -85,13 +85,13 @@ def test_register_duplicate_email(client):
 def test_auth_me(client):
     client.post('/api/auth/register', json={
         'email': 'me@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Me',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'me@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -104,13 +104,13 @@ def test_auth_me(client):
 def test_create_appointment(client):
     client.post('/api/auth/register', json={
         'email': 'appt_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Appt',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'appt_test@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -127,13 +127,13 @@ def test_create_appointment(client):
 def test_create_queue_ticket(client):
     client.post('/api/auth/register', json={
         'email': 'queue_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Queue',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'queue_test@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -150,13 +150,13 @@ def test_create_queue_ticket(client):
 def test_create_feedback(client):
     client.post('/api/auth/register', json={
         'email': 'fb_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'FB',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'fb_test@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -175,13 +175,13 @@ def test_create_feedback(client):
 def test_create_payment(client):
     client.post('/api/auth/register', json={
         'email': 'pay_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Pay',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'pay_test@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -198,13 +198,13 @@ def test_create_payment(client):
 def test_create_branchconnect_post(client):
     client.post('/api/auth/register', json={
         'email': 'bc_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'BC',
         'last_name': 'Test'
     })
     login_resp = client.post('/api/auth/login', json={
         'email': 'bc_test@example.com',
-        'password': 'pass123'
+        'password': 'Pass123!'
     })
     token = login_resp.get_json()['data']['token']
 
@@ -245,11 +245,11 @@ def test_system_endpoints(client):
 def test_notifications_flow(client):
     client.post('/api/auth/register', json={
         'email': 'notif_test@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Notif',
         'last_name': 'Test'
     })
-    login = client.post('/api/auth/login', json={'email': 'notif_test@example.com', 'password': 'pass123'})
+    login = client.post('/api/auth/login', json={'email': 'notif_test@example.com', 'password': 'Pass123!'})
     token = login.get_json()['data']['token']
     headers = {'Authorization': f'Bearer {token}'}
 
@@ -265,11 +265,11 @@ def test_notifications_flow(client):
 def test_audit_logs_admin_only(client):
     client.post('/api/auth/register', json={
         'email': 'audit_cust@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Audit',
         'last_name': 'Cust'
     })
-    login = client.post('/api/auth/login', json={'email': 'audit_cust@example.com', 'password': 'pass123'})
+    login = client.post('/api/auth/login', json={'email': 'audit_cust@example.com', 'password': 'Pass123!'})
     cust_token = login.get_json()['data']['token']
 
     forbidden = client.get('/api/audit-logs/', headers={'Authorization': f'Bearer {cust_token}'})
@@ -277,12 +277,12 @@ def test_audit_logs_admin_only(client):
 
     client.post('/api/auth/register', json={
         'email': 'audit_admin@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'Audit',
         'last_name': 'Admin',
         'role': 'SUPER_ADMIN'
     })
-    admin_login = client.post('/api/auth/login', json={'email': 'audit_admin@example.com', 'password': 'pass123'})
+    admin_login = client.post('/api/auth/login', json={'email': 'audit_admin@example.com', 'password': 'Pass123!'})
     admin_token = admin_login.get_json()['data']['token']
 
     # login writes an audit log; ensure fetchable by admin
@@ -294,11 +294,11 @@ def test_audit_logs_admin_only(client):
 def test_social_studio_admin_only(client):
     client.post('/api/auth/register', json={
         'email': 'ss_cust@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'SS',
         'last_name': 'Cust'
     })
-    login = client.post('/api/auth/login', json={'email': 'ss_cust@example.com', 'password': 'pass123'})
+    login = client.post('/api/auth/login', json={'email': 'ss_cust@example.com', 'password': 'Pass123!'})
     cust_token = login.get_json()['data']['token']
 
     forbidden = client.get('/api/social-studio/overview', headers={'Authorization': f'Bearer {cust_token}'})
@@ -306,13 +306,13 @@ def test_social_studio_admin_only(client):
 
     admin_reg = client.post('/api/auth/register', json={
         'email': 'ss_admin@example.com',
-        'password': 'pass123',
+        'password': 'Pass123!',
         'first_name': 'SS',
         'last_name': 'Admin',
         'role': 'SUPER_ADMIN'
     })
     assert admin_reg.status_code == 201
-    admin_login = client.post('/api/auth/login', json={'email': 'ss_admin@example.com', 'password': 'pass123'})
+    admin_login = client.post('/api/auth/login', json={'email': 'ss_admin@example.com', 'password': 'Pass123!'})
     admin_token = admin_login.get_json()['data']['token']
 
     overview = client.get('/api/social-studio/overview', headers={'Authorization': f'Bearer {admin_token}'})

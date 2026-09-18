@@ -22,6 +22,10 @@ def create_payment():
             return jsonify({'success': False, 'message': f'{field} is required'}), 400
 
     transaction_ref = PaymentService.build_transaction_ref()
+    
+    # Determine payment method based on configured providers
+    payment_service = PaymentService()
+    payment_method = payment_service.provider_name or 'Unknown'
 
     payment = Payment(
         customer_id=customer_id,
@@ -31,7 +35,7 @@ def create_payment():
         queue_ticket_id=data.get('queue_ticket_id'),
         amount=data['amount'],
         currency=data.get('currency', 'NGN'),
-        payment_method='ALAT Authenticator',
+        payment_method=payment_method,
         transaction_ref=transaction_ref,
         narration=data.get('narration'),
         status='PENDING'
@@ -39,7 +43,6 @@ def create_payment():
     db.session.add(payment)
     db.session.commit()
 
-    payment_service = PaymentService()
     result = payment_service.init_payment(payment)
 
     if result.get('success'):
@@ -47,13 +50,14 @@ def create_payment():
         payment.alat_consent_id = result.get('consent_id')
         db.session.commit()
         log_audit(user_id=customer_id, action='PAYMENT_INITIATED', resource_type='payment', resource_id=payment.id,
-                  details={'ref': payment.transaction_ref, 'amount': payment.amount, 'provider': 'ALAT Authenticator'})
+                  details={'ref': payment.transaction_ref, 'amount': payment.amount, 'provider': payment_method})
         return jsonify({
             'success': True,
             'data': payment.to_dict(),
             'consent_required': result.get('consent_required', False),
+            'authorization_url': result.get('authorization_url'),
             'provider': result.get('provider'),
-            'message': 'Payment initiated. Approve the debit in your ALAT app.'
+            'message': result.get('message', 'Payment initiated.')
         }), 201
 
     payment.status = 'FAILED'

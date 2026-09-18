@@ -12,3 +12,4 @@ python-dotenv==1.0.0
 gunicorn==21.2.0
 pytest==7.4.3
 requests==2.31.0
+flask-limiter==3.5.0

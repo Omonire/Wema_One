@@ -1,10 +1,21 @@
-databases:
-  - name: luma-db
-    databaseName: luma
-    user: luma
-    plan: free
-
 services:
+  # ─── Frontend (React + Vite) ───────────────────────────────────────
+  - type: web
+    name: luma-frontend
+    runtime: static
+    plan: free
+    rootDir: Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: /api
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://luma-api.onrender.com/api/*
+
+  # ─── Backend (Flask + Gunicorn) ───────────────────────────────────
   - type: web
     name: luma-api
     runtime: python
@@ -26,12 +37,13 @@ services:
         generateValue: true
       - key: JWT_SECRET_KEY
         generateValue: true
-      # Set to your Vercel URL after the frontend is deployed (e.g. https://luma.vercel.app)
+      # CORS: allow frontend origin + localhost for dev
       - key: CORS_ORIGINS
-        sync: false
+        value: https://luma-frontend.onrender.com,http://localhost:5173,http://localhost:5174
       # 1 = seed demo data on first boot
       - key: SEED_DATA
         value: "1"
+      # AI: mock is free offline fallback. Set to true + provider key for real AI.
       - key: AI_ENABLED
         value: "false"
       - key: AI_PROVIDER
@@ -40,6 +52,7 @@ services:
         sync: false
       - key: GEMINI_API_KEY
         sync: false
+      # ALAT Authenticator (primary payment provider)
       - key: ALAT_SANDBOX
         value: "true"
       - key: ALAT_BASE_URL
@@ -50,3 +63,12 @@ services:
         sync: false
       - key: ALAT_CALLBACK_URL
         sync: false
+      # Paystack fallback (used when ALAT is not configured)
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+
+databases:
+  - name: luma-db
+    databaseName: luma
+    user: luma
+    plan: free

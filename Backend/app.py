@@ -28,6 +28,9 @@ def create_app(config_name=None):
     jwt.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": app.config.get('CORS_ORIGINS', '*')}})
 
+    from services.security import init_security
+    init_security(app)
+
     from routes import register_routes
     register_routes(app)
 

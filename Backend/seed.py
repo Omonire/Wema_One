@@ -70,35 +70,55 @@ def seed(app, drop=True, only_if_empty=False):
         print("Seeding services...")
         services_data = [
             ('Open Business Account', 'Start your business journey with a Luma business account', 'Accounts', 45, 5000,
+             ['Easy Processing', 'Instant Mastercard Generation', 'Zero Hidden Fees', 'Dedicated Relationship Manager'],
+             'Business Banking Made Simple',
+             'Building2',
              [('CAC Documents', 'Certificate of Incorporation and MEMART', True),
               ('Valid ID', 'Government-issued photo ID', True),
               ('Passport Photograph', 'Recent passport-sized photograph', True),
               ('Proof of Address', 'Utility bill or bank statement', True),
               ('Other Required Documents', 'CAC form CAC1.1, TIN registration', False)]),
             ('Open Personal Account', 'Open a personal savings or current account', 'Accounts', 30, 2000,
+             ['Quick Setup', 'Free Debit Card', 'Mobile Banking Access', 'No Minimum Balance'],
+             'Your Money, Your Way',
+             'Wallet',
              [('Valid ID', 'Government-issued photo ID', True),
               ('Passport Photograph', 'Recent passport-sized photograph', True),
               ('BVN', 'Bank Verification Number', True)]),
             ('Card Services', 'Apply for debit or credit card, card replacement', 'Cards', 20, 1500,
+             ['Instant Card Issuance', 'Worldwide Acceptance', 'Contactless Payment', 'Free Card Replacement'],
+             'Pay Everywhere, Anytime',
+             'CreditCard',
              [('Valid ID', 'Government-issued photo ID', True),
               ('Account Number', 'Existing Luma account number', True)]),
             ('Account Verification', 'Verify your account for enhanced services', 'Verification', 15, 0,
+             ['Instant Verification', 'Enhanced Limits', 'Secure Process', 'One-Time Setup'],
+             'Unlock Full Access',
+             'ShieldCheck',
              [('Valid ID', 'Government-issued photo ID', True),
               ('BVN', 'Bank Verification Number', True)]),
             ('Loan Application', 'Apply for personal or business loans', 'Lending', 60, 0,
+             ['Competitive Rates', 'Quick Approval', 'Flexible Repayment', 'No Hidden Charges'],
+             'Funds When You Need Them',
+             'Landmark',
              [('Valid ID', 'Government-issued photo ID', True),
               ('Proof of Income', 'Salary slip or business financials', True),
               ('CAC Documents', 'Business registration (for business loans)', False),
               ('Bank Statements', 'Last 6 months bank statements', True)]),
             ('BVN Services', 'BVN registration, update, or correction', 'Verification', 25, 500,
+             ['Same-Day Registration', 'Instant Update', ' Nationwide Coverage', 'Secure Biometrics'],
+             'Your Identity, Verified',
+             'Fingerprint',
              [('Valid ID', 'Government-issued photo ID', True),
               ('Passport Photograph', 'Recent passport-sized photograph', True)]),
         ]
 
         services = []
-        for name, desc, cat, est_time, fee, reqs in services_data:
+        for name, desc, cat, est_time, fee, features, tagline, icon, reqs in services_data:
             s = Service(name=name, description=desc, category=cat,
-                       estimated_time_minutes=est_time, fee=fee)
+                       estimated_time_minutes=est_time, fee=fee,
+                       tagline=tagline, icon=icon)
+            s.set_features(features)
             db.session.add(s)
             services.append(s)
         db.session.flush()

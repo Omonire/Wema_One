@@ -5,6 +5,16 @@ import { useAuth } from '../../context/AuthContext';
 import Reveal from '../../components/ScrollReveal';
 import { LoadingPage, Card, CardTitle, PrimaryButton, Field, Select, Input, Alert } from '../../components/ui/Elements';
 
+const ICON_MAP = {
+  'CreditCard': 'credit_card',
+  'Building2': 'business',
+  'Wallet': 'account_balance_wallet',
+  'ShieldCheck': 'verified_user',
+  'Landmark': 'account_balance',
+  'Fingerprint': 'fingerprint',
+  'WalletCards': 'wallet',
+};
+
 export default function ServiceDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -59,13 +69,21 @@ export default function ServiceDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Service card */}
+      {/* Service Header Card */}
       <Card className="mb-6" direction="down">
-        <div className="flex items-start justify-between mb-4 gap-4">
-          <div>
+        <div className="flex items-start gap-4 mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-primary-container/20 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-primary text-3xl">
+              {ICON_MAP[service.icon] || 'services'}
+            </span>
+          </div>
+          <div className="flex-1">
             <span className="font-data-mono-xs text-xs uppercase text-primary font-semibold tracking-wider">{service.category}</span>
             <h1 className="font-headline-md text-2xl md:text-3xl font-bold text-on-surface tracking-tight mt-1">{service.name}</h1>
-            <p className="text-on-surface-variant mt-1">{service.description}</p>
+            {service.tagline && (
+              <p className="text-sm text-primary font-medium italic mt-1">{service.tagline}</p>
+            )}
+            <p className="text-on-surface-variant mt-2">{service.description}</p>
           </div>
           <div className="text-right shrink-0">
             <div className="text-2xl font-bold text-primary font-data-mono">{service.fee > 0 ? `₦${service.fee.toLocaleString()}` : 'Free'}</div>
@@ -73,6 +91,22 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
+        {/* Features/Benefits Section */}
+        {service.features && service.features.length > 0 && (
+          <div className="border-t border-outline-variant/20 pt-4 mb-4">
+            <CardTitle icon="stars">What You Get</CardTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              {service.features.map((feature, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <span className="material-symbols-outlined text-[18px] text-tertiary">check_circle</span>
+                  <span className="text-on-surface">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Requirements Section */}
         <div className="border-t border-outline-variant/20 pt-4">
           <CardTitle icon="fact_check">Required Documents</CardTitle>
           {service.requirements?.map((req, i) => (
