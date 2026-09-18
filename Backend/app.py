@@ -14,8 +14,6 @@ def create_app(config_name=None):
 
     if config_name == 'production':
         missing = []
-        if not os.getenv('DATABASE_URL'):
-            missing.append('DATABASE_URL (PostgreSQL)')
         if app.config['SECRET_KEY'].startswith('dev-'):
             missing.append('SECRET_KEY')
         if app.config['JWT_SECRET_KEY'].startswith('dev-'):
