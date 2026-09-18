@@ -47,7 +47,7 @@ def create_app(config_name=None):
         return jsonify({'success': False, 'message': 'Bad request'}), 400
 
     with app.app_context():
-        db.create_all()
+        _create_all_safe()
         _ensure_columns(app)
 
     if app.config.get('SEED_DATA'):
@@ -58,6 +58,21 @@ def create_app(config_name=None):
             app.logger.warning(f'SEED_DATA enabled but seeding failed: {e}')
 
     return app
+
+
+def _create_all_safe():
+    """create_all() wrapped in a Postgres advisory lock so multiple gunicorn
+    workers can't race on schema creation (fixes pg_type_typname_nsp_index)."""
+    engine = db.engine
+    if engine.url.get_backend_name() == 'postgresql':
+        with engine.begin() as conn:
+            conn.execute(db.text('SELECT pg_advisory_lock(727271923)'))
+            try:
+                db.create_all()
+            finally:
+                conn.execute(db.text('SELECT pg_advisory_unlock(727271923)'))
+    else:
+        db.create_all()
 
 
 def _ensure_columns(app):
