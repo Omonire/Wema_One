@@ -29,8 +29,8 @@ def seed(app, drop=True, only_if_empty=False):
         print("Seeding users...")
         users = []
         roles_data = [
-            ('admin@Luma.com', 'Admin', 'User', 'ADMIN', None),
-            ('superadmin@Luma.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
+            ('admin@luma.com', 'Admin', 'User', 'ADMIN', None),
+            ('superadmin@luma.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
         ]
         for email, first, last, role, bid in roles_data:
             u = User(email=email, first_name=first, last_name=last, role=role, phone='08012345678')
@@ -56,10 +56,10 @@ def seed(app, drop=True, only_if_empty=False):
         db.session.flush()
 
         bo_emails = [
-            ('officer1@Luma.com', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
-            ('officer2@Luma.com', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
-            ('manager1@Luma.com', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
-            ('manager2@Luma.com', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
+            ('officer1@luma.com', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
+            ('officer2@luma.com', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
+            ('manager1@luma.com', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
+            ('manager2@luma.com', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
         ]
         for email, first, last, role, bidx in bo_emails:
             u = User(email=email, first_name=first, last_name=last, role=role,

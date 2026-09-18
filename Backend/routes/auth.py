@@ -67,7 +67,7 @@ def login():
         return jsonify({'success': False, 'message': 'Email and password required'}), 400
 
     email = data['email'].lower().strip()
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter(db.func.lower(User.email) == email).first()
 
     if not user or not user.check_password(data['password']):
         record_failed_login(email)
