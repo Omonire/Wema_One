@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -88,7 +89,7 @@ export default function QueuePage() {
         </div>
         <PrimaryButton onClick={handleJoin} disabled={!form.branch_id || !form.service_id || submitting}>
           {submitting ? 'Joining...' : 'Join Queue'}
-          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          <SvgIcon name="arrow_forward" className="text-[16px]" />
         </PrimaryButton>
       </Card>
     </div>

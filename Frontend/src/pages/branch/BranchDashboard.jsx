@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -68,7 +69,7 @@ export default function BranchDashboard() {
         {stats.map((s, i) => (
           <Reveal key={s.label} delay={i * 80} className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-sm">
             <div className="flex items-center justify-between mb-1">
-              <span className="material-symbols-outlined text-outline-variant text-[20px]">{s.icon}</span>
+              <SvgIcon name={s.icon} className="text-outline-variant text-[20px]" />
               <div className={`text-3xl font-bold ${s.color} font-data-mono`}>{s.value}</div>
             </div>
             <div className="text-sm text-on-surface-variant">{s.label}</div>

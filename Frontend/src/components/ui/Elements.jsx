@@ -1,4 +1,5 @@
 import Reveal from '../ScrollReveal';
+import SvgIcon from './SvgIcon';
 
 export function LoadingSpinner() {
   return (
@@ -105,7 +106,7 @@ export function Card({ children, className = '', reveal = true, delay = 0, direc
 export function CardTitle({ children, icon }) {
   return (
     <div className="flex items-center gap-2 pb-3 mb-4 border-b border-outline-variant/20">
-      {icon && <span className="material-symbols-outlined text-primary-container text-[20px]">{icon}</span>}
+      {icon && <SvgIcon name={icon} size={20} className="text-primary-container shrink-0" />}
       <h3 className="font-semibold text-on-surface">{children}</h3>
     </div>
   );

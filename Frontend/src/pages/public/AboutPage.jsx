@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { Link } from 'react-router-dom';
 import Reveal from '../../components/ScrollReveal';
 import { PageHeader } from '../../components/ui/Elements';
@@ -14,7 +15,7 @@ export default function AboutPage() {
       <div className="space-y-8">
         <Reveal direction="right" className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <span className="material-symbols-outlined text-primary-container text-[22px]">visibility</span>
+            <SvgIcon name="visibility" className="text-primary-container text-[22px]" />
             <h2 className="text-xl font-bold text-on-surface">Our Vision</h2>
           </div>
           <p className="text-on-surface-variant leading-relaxed">
@@ -25,7 +26,7 @@ export default function AboutPage() {
 
         <Reveal direction="left" className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <span className="material-symbols-outlined text-error text-[22px]">report_problem</span>
+            <SvgIcon name="report_problem" className="text-error text-[22px]" />
             <h2 className="text-xl font-bold text-on-surface">The Problem</h2>
           </div>
           <p className="text-on-surface-variant leading-relaxed mb-3">
@@ -39,7 +40,7 @@ export default function AboutPage() {
 
         <Reveal direction="up" className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <span className="material-symbols-outlined text-primary-container text-[22px]">grid_view</span>
+            <SvgIcon name="grid_view" className="text-primary-container text-[22px]" />
             <h2 className="text-xl font-bold text-on-surface">Platform Modules</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -52,7 +53,7 @@ export default function AboutPage() {
               { icon: 'insights', name: 'Luma Intelligence', desc: 'Executive analytics dashboard', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
             ].map((m, i) => (
               <Reveal key={m.name} delay={i * 70} className={`p-4 rounded-xl ${m.bg} flex items-start gap-3`}>
-                <span className={`material-symbols-outlined ${m.color} text-[22px]`}>{m.icon}</span>
+                <SvgIcon name={m.icon} size={22} className={m.color} />
                 <div>
                   <h3 className="font-semibold text-on-surface">{m.name}</h3>
                   <p className="text-sm text-on-surface-variant">{m.desc}</p>
@@ -65,7 +66,7 @@ export default function AboutPage() {
         <Reveal direction="zoom" className="text-center pt-4">
           <Link to="/services" className="inline-flex items-center gap-2 h-12 px-8 rounded-lg bg-primary-container hover:bg-primary text-white text-base font-semibold transition-all shadow-[0_4px_14px_rgba(0,82,255,0.3)] hover:-translate-y-0.5">
             Get Started Free
-            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <SvgIcon name="arrow_forward" className="text-[18px]" />
           </Link>
         </Reveal>
       </div>

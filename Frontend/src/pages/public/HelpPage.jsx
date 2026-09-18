@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import Reveal from '../../components/ScrollReveal';
 import { PageHeader } from '../../components/ui/Elements';
 
@@ -25,7 +26,7 @@ export default function HelpPage() {
           <Reveal key={i} delay={i * 60} direction="right"
             className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-sm">
             <h3 className="font-semibold text-on-surface mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary-container text-[18px]">help</span>
+              <SvgIcon name="help" className="text-primary-container text-[18px]" />
               {faq.q}
             </h3>
             <p className="text-sm text-on-surface-variant pl-7">{faq.a}</p>

@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -61,7 +62,7 @@ export default function LoginPage() {
             <button type="submit" disabled={loading}
               className="w-full bg-primary-container hover:bg-primary text-white py-2.5 rounded-lg font-semibold text-sm transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)] disabled:opacity-50 inline-flex items-center justify-center gap-2">
               {loading ? 'Signing in...' : 'Sign In'}
-              {!loading && <span className="material-symbols-outlined text-[16px]">arrow_forward</span>}
+              {!loading && <SvgIcon name="arrow_forward" className="text-[16px]" />}
             </button>
           </form>
           <div className="mt-4 text-center">

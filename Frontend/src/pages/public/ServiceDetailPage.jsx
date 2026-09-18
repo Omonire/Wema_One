@@ -4,16 +4,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Reveal from '../../components/ScrollReveal';
 import { LoadingPage, Card, CardTitle, PrimaryButton, Field, Select, Input, Alert } from '../../components/ui/Elements';
-
-const ICON_MAP = {
-  'CreditCard': 'credit_card',
-  'Building2': 'business',
-  'Wallet': 'account_balance_wallet',
-  'ShieldCheck': 'verified_user',
-  'Landmark': 'account_balance',
-  'Fingerprint': 'fingerprint',
-  'WalletCards': 'wallet',
-};
+import SvgIcon from '../../components/ui/SvgIcon';
 
 export default function ServiceDetailPage() {
   const { id } = useParams();
@@ -73,9 +64,7 @@ export default function ServiceDetailPage() {
       <Card className="mb-6" direction="down">
         <div className="flex items-start gap-4 mb-4">
           <div className="w-14 h-14 rounded-2xl bg-primary-container/20 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-primary text-3xl">
-              {ICON_MAP[service.icon] || 'services'}
-            </span>
+            <SvgIcon name={service.icon || 'services'} size={28} className="text-primary" />
           </div>
           <div className="flex-1">
             <span className="font-data-mono-xs text-xs uppercase text-primary font-semibold tracking-wider">{service.category}</span>
@@ -98,7 +87,7 @@ export default function ServiceDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
               {service.features.map((feature, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-sm">
-                  <span className="material-symbols-outlined text-[18px] text-tertiary">check_circle</span>
+                  <SvgIcon name="check_circle" size={18} className="text-tertiary shrink-0" />
                   <span className="text-on-surface">{feature}</span>
                 </div>
               ))}
@@ -146,7 +135,7 @@ export default function ServiceDetailPage() {
         </div>
         <PrimaryButton onClick={handleBook} disabled={!selectedBranch || !selectedDate || !selectedSlot || booking}>
           {booking ? 'Booking...' : 'Book Appointment'}
-          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          <SvgIcon name="arrow_forward" size={16} className="shrink-0" />
         </PrimaryButton>
         {!user && (
           <Alert kind="info" className="mt-4">You'll be asked to sign in before booking.</Alert>

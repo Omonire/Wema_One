@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -100,7 +101,7 @@ export default function PaymentsPage() {
 
           <PrimaryButton onClick={handlePay} disabled={!selectedService || paying}>
             {paying ? 'Processing...' : 'Pay Now'}
-            <span className="material-symbols-outlined text-[16px]">lock</span>
+            <SvgIcon name="lock" className="text-[16px]" />
           </PrimaryButton>
         </Card>
 
@@ -109,7 +110,7 @@ export default function PaymentsPage() {
           {consentPayment && (
             <Reveal direction="left" className="rounded-2xl p-6 bg-primary-fixed/40 border border-primary/30">
               <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-primary text-2xl">approval</span>
+                <SvgIcon name="approval" className="text-primary text-2xl" />
                 <div>
                   <h3 className="font-semibold text-on-surface">Approval Required</h3>
                   <p className="text-sm text-on-surface-variant mt-1">
@@ -126,13 +127,13 @@ export default function PaymentsPage() {
           {!consentPayment && (
             <Card delay={100} direction="right" className="bg-surface-container-low">
               <div className="flex items-center gap-3 mb-3">
-                <span className="material-symbols-outlined text-tertiary text-[22px]">verified_user</span>
+                <SvgIcon name="verified_user" className="text-tertiary text-[22px]" />
                 <h3 className="font-semibold text-on-surface">Bank-Level Protection</h3>
               </div>
               <ul className="space-y-2 text-sm text-on-surface-variant">
-                <li className="flex items-center gap-2"><span className="material-symbols-outlined text-tertiary text-[16px]">check_circle</span> Every payment is encrypted and receipted instantly.</li>
-                <li className="flex items-center gap-2"><span className="material-symbols-outlined text-tertiary text-[16px]">check_circle</span> Approve debits from your own banking app.</li>
-                <li className="flex items-center gap-2"><span className="material-symbols-outlined text-tertiary text-[16px]">check_circle</span> Receipts are attached to your visit automatically.</li>
+                <li className="flex items-center gap-2"><SvgIcon name="check_circle" className="text-tertiary text-[16px]" /> Every payment is encrypted and receipted instantly.</li>
+                <li className="flex items-center gap-2"><SvgIcon name="check_circle" className="text-tertiary text-[16px]" /> Approve debits from your own banking app.</li>
+                <li className="flex items-center gap-2"><SvgIcon name="check_circle" className="text-tertiary text-[16px]" /> Receipts are attached to your visit automatically.</li>
               </ul>
             </Card>
           )}

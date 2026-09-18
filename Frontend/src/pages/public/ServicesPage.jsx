@@ -3,17 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
 import { LoadingPage, PageHeader } from '../../components/ui/Elements';
-
-const ICON_MAP = {
-  'CreditCard': 'credit_card',
-  'Building2': 'business',
-  'Wallet': 'account_balance_wallet',
-  'ShieldCheck': 'verified_user',
-  'Landmark': 'account_balance',
-  'Fingerprint': 'fingerprint',
-  'WalletCards': 'wallet',
-  'ArrowRight': 'arrow_forward',
-};
+import SvgIcon from '../../components/ui/SvgIcon';
 
 export default function ServicesPage() {
   const [services, setServices] = useState([]);
@@ -47,9 +37,7 @@ export default function ServicesPage() {
                 {/* Service Header */}
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-primary text-xl">
-                      {ICON_MAP[service.icon] || 'services'}
-                    </span>
+                    <SvgIcon name={service.icon || 'services'} size={20} className="text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-on-surface mb-1">{service.name}</h3>
@@ -68,7 +56,7 @@ export default function ServicesPage() {
                     <div className="flex flex-wrap gap-1.5">
                       {service.features.map((feature, idx) => (
                         <span key={idx} className="inline-flex items-center gap-1 text-xs bg-tertiary-container/30 text-tertiary px-2 py-1 rounded-full">
-                          <span className="material-symbols-outlined text-[12px]">check_circle</span>
+                          <SvgIcon name="check_circle" size={12} className="shrink-0" />
                           {feature}
                         </span>
                       ))}
@@ -79,7 +67,7 @@ export default function ServicesPage() {
                 {/* Time and Price */}
                 <div className="flex items-center justify-between text-sm text-on-surface-variant mb-4">
                   <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-primary">schedule</span>
+                    <SvgIcon name="schedule" size={16} className="text-primary shrink-0" />
                     ~{service.estimated_time_minutes} min
                   </span>
                   <span className="font-data-mono font-semibold text-primary">

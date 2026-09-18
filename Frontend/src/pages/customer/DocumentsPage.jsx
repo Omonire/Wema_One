@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -77,7 +78,7 @@ export default function DocumentsPage() {
         </div>
         <PrimaryButton onClick={handleUpload} disabled={!selectedFile || uploading}>
           {uploading ? 'Uploading & Verifying...' : 'Upload & Verify'}
-          <span className="material-symbols-outlined text-[16px]">verified_user</span>
+          <SvgIcon name="verified_user" className="text-[16px]" />
         </PrimaryButton>
       </Card>
 

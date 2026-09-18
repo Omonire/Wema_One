@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -49,7 +50,7 @@ export default function AdminDashboard() {
       {/* Customer Metrics */}
       <Reveal direction="left">
         <h2 className="text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary-container text-[20px]">group</span>Customer Metrics
+          <SvgIcon name="group" className="text-primary-container text-[20px]" />Customer Metrics
         </h2>
       </Reveal>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

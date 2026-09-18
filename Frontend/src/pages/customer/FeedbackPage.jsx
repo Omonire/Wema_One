@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -86,7 +87,7 @@ export default function FeedbackPage() {
         </div>
         <PrimaryButton onClick={handleSubmit} disabled={!form.content.trim() || submitting}>
           {submitting ? 'Submitting...' : 'Submit Feedback'}
-          <span className="material-symbols-outlined text-[16px]">send</span>
+          <SvgIcon name="send" className="text-[16px]" />
         </PrimaryButton>
       </Card>
 

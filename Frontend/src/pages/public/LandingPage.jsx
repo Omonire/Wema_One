@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../../components/ScrollReveal';
+import SvgIcon from '../../components/ui/SvgIcon';
 
 const LIFECYCLE_STEPS = [
   { label: 'Start', icon: 'confirmation_number', caption: 'Ticket #WMA-2841 created — your spot is saved from home.' },
@@ -90,9 +91,7 @@ export default function LandingPage() {
             aria-label="Hero video playback speed"
             className="absolute bottom-6 right-6 z-20 inline-flex items-center gap-1 rounded-lg border border-white/25 bg-white/10 p-1 backdrop-blur-sm"
           >
-            <span className="material-symbols-outlined px-1.5 text-[16px] text-white/60" aria-hidden="true">
-              speed
-            </span>
+            <SvgIcon name="speed" size={16} className="px-1.5 text-white/60" />
             {[0.5, 1, 1.5, 2].map((s) => (
               <button
                 key={s}
@@ -145,7 +144,7 @@ export default function LandingPage() {
                 className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary-container hover:bg-primary text-white text-base font-semibold transition-all shadow-[0_4px_14px_rgba(0,82,255,0.4)] hover:-translate-y-0.5"
               >
                 <span>Get Started Free</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" size={18} className="shrink-0" />
               </Link>
               <a
                 href="#how-it-works"
@@ -183,22 +182,22 @@ export default function LandingPage() {
             {/* Sectors Row */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-on-surface-variant text-sm font-medium">
               <span className="text-xs uppercase font-bold tracking-wider text-on-surface">Trusted by everyday services you use:</span>
-              <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-primary-container text-[18px]">account_balance</span> Banks</span>
-              <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-primary-container text-[18px]">local_hospital</span> Hospitals &amp; Clinics</span>
-              <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-primary-container text-[18px]">policy</span> Government Offices</span>
-              <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-primary-container text-[18px]">cell_tower</span> Phone Companies</span>
-              <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-primary-container text-[18px]">token</span> Online Apps</span>
+              <span className="flex items-center gap-1.5"><SvgIcon name="account_balance" size={18} className="text-primary-container shrink-0" /> Banks</span>
+              <span className="flex items-center gap-1.5"><SvgIcon name="local_hospital" size={18} className="text-primary-container shrink-0" /> Hospitals &amp; Clinics</span>
+              <span className="flex items-center gap-1.5"><SvgIcon name="policy" size={18} className="text-primary-container shrink-0" /> Government Offices</span>
+              <span className="flex items-center gap-1.5"><SvgIcon name="cell_tower" size={18} className="text-primary-container shrink-0" /> Phone Companies</span>
+              <span className="flex items-center gap-1.5"><SvgIcon name="token" size={18} className="text-primary-container shrink-0" /> Online Apps</span>
             </div>
             {/* Trust Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
               <span className="px-3 py-1 rounded-md bg-surface-container-low border border-outline-variant/40 font-data-mono-xs text-xs font-semibold text-on-surface flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-tertiary-container text-[16px]">verified</span> Verified Safe &amp; Secure
+                <SvgIcon name="verified" size={16} className="text-tertiary-container shrink-0" /> Verified Safe &amp; Secure
               </span>
               <span className="px-3 py-1 rounded-md bg-surface-container-low border border-outline-variant/40 font-data-mono-xs text-xs font-semibold text-on-surface flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-tertiary-container text-[16px]">shield</span> Bank-Level Protection
+                <SvgIcon name="shield" size={16} className="text-tertiary-container shrink-0" /> Bank-Level Protection
               </span>
               <span className="px-3 py-1 rounded-md bg-surface-container-low border border-outline-variant/40 font-data-mono-xs text-xs font-semibold text-on-surface flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-tertiary-container text-[16px]">lock</span> 100% Privacy Guaranteed
+                <SvgIcon name="lock" size={16} className="text-tertiary-container shrink-0" /> 100% Privacy Guaranteed
               </span>
             </div>
           </div>
@@ -228,7 +227,7 @@ export default function LandingPage() {
             {/* Rail header */}
             <div className="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-8">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary-container text-[20px]">alt_route</span>
+                <SvgIcon name="alt_route" className="text-primary-container text-[20px]" />
                 <span className="font-label-caps text-xs uppercase text-on-surface-variant font-semibold tracking-wider">How your visit works</span>
               </div>
               <span className="font-data-mono-xs text-xs text-tertiary font-semibold flex items-center gap-1.5 bg-tertiary-fixed/40 px-2.5 py-1 rounded-full">
@@ -288,7 +287,7 @@ export default function LandingPage() {
               <div key={activeStep} className="step-pop flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="w-11 h-11 rounded-xl bg-primary-fixed flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary-container text-[24px]">{currentStep.icon}</span>
+                    <SvgIcon name={currentStep.icon} className="text-primary-container text-[24px]" />
                   </span>
                   <div>
                     <div className="font-data-mono-xs text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">
@@ -331,28 +330,28 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-error/15 mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-error text-[22px]">warning</span>
+                  <SvgIcon name="warning" className="text-error text-[22px]" />
                   <h3 className="text-lg font-bold text-on-surface">The Old Painful Way</h3>
                 </div>
                 <span className="font-data-mono-xs text-xs bg-error-container text-on-error-container px-2.5 py-1 rounded-md font-bold">FRUSTRATING</span>
               </div>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-error">
-                  <span className="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">hourglass_bottom</span>
+                  <SvgIcon name="hourglass_bottom" className="text-error text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Endless Waiting Lines</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">Waiting on a plastic chair for over an hour with no idea when your number will be called.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-error">
-                  <span className="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">assignment_late</span>
+                  <SvgIcon name="assignment_late" className="text-error text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Turned Away at the Counter</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">You wait forever only to find out you brought the wrong document and have to start over tomorrow.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-error">
-                  <span className="material-symbols-outlined text-error text-[20px] shrink-0 mt-0.5">sync_problem</span>
+                  <SvgIcon name="sync_problem" className="text-error text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Explaining Yourself Over and Over</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">Every new staff member you speak to asks the exact same questions from scratch.</p>
@@ -370,28 +369,28 @@ export default function LandingPage() {
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-tertiary-container/20 mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-tertiary text-[22px]">check_circle</span>
+                  <SvgIcon name="check_circle" className="text-tertiary text-[22px]" />
                   <h3 className="text-lg font-bold text-on-surface">The Luma Easy Way</h3>
                 </div>
                 <span className="font-data-mono-xs text-xs bg-tertiary-fixed text-tertiary px-2.5 py-1 rounded-md font-bold">SIMPLE &amp; FAST</span>
               </div>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-tertiary">
-                  <span className="material-symbols-outlined text-tertiary text-[20px] shrink-0 mt-0.5">schedule</span>
+                  <SvgIcon name="schedule" className="text-tertiary text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Save Your Spot from Home</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">Grab a digital ticket on your phone and arrive right when it's your turn.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-tertiary">
-                  <span className="material-symbols-outlined text-tertiary text-[20px] shrink-0 mt-0.5">task_alt</span>
+                  <SvgIcon name="task_alt" className="text-tertiary text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Check Papers Before You Leave</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">Snap a quick photo of your documents at home so you know they're approved before you travel.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border-l-4 border-tertiary">
-                  <span className="material-symbols-outlined text-tertiary text-[20px] shrink-0 mt-0.5">hub</span>
+                  <SvgIcon name="hub" className="text-tertiary text-[20px] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm font-bold text-on-surface">Staff Already Know What You Need</div>
                     <p className="text-xs text-on-surface-variant mt-0.5">Whoever serves you sees your notes immediately, so you never repeat yourself.</p>
@@ -428,7 +427,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">01 / MESSAGING</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">forum</span>
+                  <SvgIcon name="forum" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Chat Support</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -442,7 +441,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Instant Messaging</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
 
@@ -451,7 +450,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">02 / WAIT TIME</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">confirmation_number</span>
+                  <SvgIcon name="confirmation_number" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Line Saver</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -470,7 +469,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Save Your Spot</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
 
@@ -479,7 +478,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">03 / PAPERS</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">verified_user</span>
+                  <SvgIcon name="verified_user" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Paperwork Check</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -498,7 +497,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Never Turned Away</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
 
@@ -507,7 +506,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">04 / PAYMENTS</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">payments</span>
+                  <SvgIcon name="payments" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Easy Payments</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -523,7 +522,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Fast &amp; Transparent</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
 
@@ -532,7 +531,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">05 / TEAM TOOLS</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">hub</span>
+                  <SvgIcon name="hub" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Staff Help Desk</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -545,7 +544,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Shared Best Practices</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
 
@@ -554,7 +553,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-data-mono-xs text-xs text-primary font-bold">06 / OVERSIGHT</span>
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">psychology</span>
+                  <SvgIcon name="psychology" className="text-primary-container text-[20px]" />
                 </div>
                 <h3 className="font-headline-md text-xl font-bold text-on-surface">Live Insights</h3>
                 <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">
@@ -573,7 +572,7 @@ export default function LandingPage() {
               </div>
               <div className="mt-6 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-semibold text-primary">
                 <span>Zero Long Lines</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </div>
             </div>
           </div>
@@ -607,7 +606,7 @@ export default function LandingPage() {
             <div className="lg:col-span-6 bg-[#121826] border border-[#1E293B] rounded-2xl p-6 space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary-container text-[20px]">forum</span>
+                  <SvgIcon name="forum" className="text-primary-container text-[20px]" />
                   <span className="text-sm font-semibold text-white">Live Help Chat</span>
                 </div>
                 <span className="font-data-mono-xs text-xs text-tertiary-fixed-dim">Instant Answer Ready</span>
@@ -633,7 +632,7 @@ export default function LandingPage() {
               <div className="p-4 rounded-xl bg-[#0B0F19] border border-primary-container/40 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-primary-fixed font-semibold flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px]">check_circle</span> Verified Instant Reply
+                    <SvgIcon name="check_circle" className="text-[16px]" /> Verified Instant Reply
                   </span>
                   <span className="font-data-mono-xs text-tertiary-fixed-dim">Ready to Send</span>
                 </div>
@@ -653,7 +652,7 @@ export default function LandingPage() {
             <div className="lg:col-span-6 bg-[#121826] border border-[#1E293B] rounded-2xl p-6 space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-tertiary-fixed-dim text-[20px]">analytics</span>
+                  <SvgIcon name="analytics" className="text-tertiary-fixed-dim text-[20px]" />
                   <span className="text-sm font-semibold text-white">Daily Wait Time Tracker</span>
                 </div>
                 <div className="flex items-center gap-3 font-data-mono-xs text-xs">
@@ -711,7 +710,7 @@ export default function LandingPage() {
           {/* Central Hub */}
           <div className="max-w-md mx-auto p-6 rounded-2xl bg-primary-container text-white text-center shadow-lg mb-10">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <span className="material-symbols-outlined text-[24px]">hub</span>
+              <SvgIcon name="hub" className="text-[24px]" />
               <span className="font-headline-md text-lg font-bold">LUMA HUB</span>
             </div>
             <span className="font-data-mono-xs text-xs text-primary-fixed uppercase tracking-wider font-semibold">Everything connected</span>
@@ -722,28 +721,28 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-center">
               <div className="w-10 h-10 rounded-full bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center mx-auto text-primary mb-3">
-                <span className="material-symbols-outlined text-[22px]">smartphone</span>
+                <SvgIcon name="smartphone" className="text-[22px]" />
               </div>
               <h4 className="font-bold text-on-surface text-base">1. Start from Your Phone</h4>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Message on WhatsApp or book online from home.</p>
             </div>
             <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-center">
               <div className="w-10 h-10 rounded-full bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center mx-auto text-primary mb-3">
-                <span className="material-symbols-outlined text-[22px]">fact_check</span>
+                <SvgIcon name="fact_check" className="text-[22px]" />
               </div>
               <h4 className="font-bold text-on-surface text-base">2. Check Papers Early</h4>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Fix any missing signatures or documents in seconds.</p>
             </div>
             <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-center">
               <div className="w-10 h-10 rounded-full bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center mx-auto text-primary mb-3">
-                <span className="material-symbols-outlined text-[22px]">support_agent</span>
+                <SvgIcon name="support_agent" className="text-[22px]" />
               </div>
               <h4 className="font-bold text-on-surface text-base">3. Friendly Counter Help</h4>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Desk staff have your info ready the moment you sit down.</p>
             </div>
             <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-center">
               <div className="w-10 h-10 rounded-full bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center mx-auto text-primary mb-3">
-                <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
+                <SvgIcon name="auto_awesome" className="text-[22px]" />
               </div>
               <h4 className="font-bold text-on-surface text-base">4. Keep Getting Better</h4>
               <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Teams learn what took too long and make it faster next time.</p>
@@ -768,7 +767,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="material-symbols-outlined text-primary-container text-[26px]">shield_person</span>
+                <SvgIcon name="shield_person" className="text-primary-container text-[26px]" />
                 <span className="font-data-mono-xs text-xs font-bold text-primary">PRIVATE</span>
               </div>
               <h4 className="text-base font-bold text-on-surface">Strict Staff Access</h4>
@@ -776,7 +775,7 @@ export default function LandingPage() {
             </div>
             <div className="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="material-symbols-outlined text-primary-container text-[26px]">policy</span>
+                <SvgIcon name="policy" className="text-primary-container text-[26px]" />
                 <span className="font-data-mono-xs text-xs font-bold text-primary">CERTIFIED</span>
               </div>
               <h4 className="text-base font-bold text-on-surface">Bank-Grade Safety</h4>
@@ -784,7 +783,7 @@ export default function LandingPage() {
             </div>
             <div className="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="material-symbols-outlined text-primary-container text-[26px]">speed</span>
+                <SvgIcon name="speed" className="text-primary-container text-[26px]" />
                 <span className="font-data-mono-xs text-xs font-bold text-primary">24 / 7</span>
               </div>
               <h4 className="text-base font-bold text-on-surface">Always Up &amp; Running</h4>
@@ -792,7 +791,7 @@ export default function LandingPage() {
             </div>
             <div className="p-6 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="material-symbols-outlined text-primary-container text-[26px]">lock</span>
+                <SvgIcon name="lock" className="text-primary-container text-[26px]" />
                 <span className="font-data-mono-xs text-xs font-bold text-primary">PROTECTED</span>
               </div>
               <h4 className="text-base font-bold text-on-surface">Tamper-Proof Records</h4>
@@ -821,7 +820,7 @@ export default function LandingPage() {
                 href="mailto:hello@luma.com"
                 className="mt-8 inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-sm font-semibold border border-outline-variant/60 shadow-sm transition-all"
               >
-                <span className="material-symbols-outlined text-primary-container text-[18px]">support_agent</span>
+                <SvgIcon name="support_agent" className="text-primary-container text-[18px]" />
                 <span>Still stuck? Ask us anything</span>
               </a>
             </Reveal>
@@ -844,12 +843,12 @@ export default function LandingPage() {
                         <span className="font-data-mono-xs text-xs text-primary font-bold">{String(i + 1).padStart(2, '0')}</span>
                         {faq.q}
                       </span>
-                      <span
-                        className={`material-symbols-outlined text-[22px] shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary-container' : 'text-on-surface-variant'}`}
+                      <SvgIcon
+                        name="expand_more"
+                        size={22}
+                        className={`shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary-container' : 'text-on-surface-variant'}`}
                         aria-hidden="true"
-                      >
-                        expand_more
-                      </span>
+                      />
                     </button>
                     {/* Smooth height animation via grid-template-rows trick */}
                     <div
@@ -890,7 +889,7 @@ export default function LandingPage() {
                 className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary-container hover:bg-primary text-white text-base font-semibold transition-all shadow-[0_4px_14px_rgba(0,82,255,0.3)] hover:-translate-y-0.5"
               >
                 <span>Get Started Free</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" size={18} className="shrink-0" />
               </Link>
               <a
                 href="#how-it-works"
@@ -900,7 +899,7 @@ export default function LandingPage() {
               </a>
             </div>
             <div className="pt-2 flex items-center gap-2 text-on-surface-variant font-data-mono-xs text-xs">
-              <span className="material-symbols-outlined text-primary-container text-[18px]">support_agent</span>
+              <SvgIcon name="support_agent" className="text-primary-container text-[18px]" />
               <span>Need help? Talk to our team: <span className="text-on-surface font-semibold underline cursor-pointer">hello@luma.com</span></span>
             </div>
           </div>

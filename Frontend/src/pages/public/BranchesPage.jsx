@@ -1,3 +1,4 @@
+import SvgIcon from '../../components/ui/SvgIcon';
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import Reveal from '../../components/ScrollReveal';
@@ -30,20 +31,20 @@ export default function BranchesPage() {
                 <circle cx="340" cy="30" r="50" stroke="#ffffff" strokeWidth="2" />
               </svg>
               <div className="text-center text-white relative">
-                <span className="material-symbols-outlined text-[28px] mb-1">account_balance</span>
+                <SvgIcon name="account_balance" className="text-[28px] mb-1" />
                 <div className="font-headline-md font-bold text-lg">{branch.name}</div>
               </div>
             </div>
             <div className="p-5 space-y-2">
               <p className="text-sm text-on-surface flex items-start gap-2">
-                <span className="material-symbols-outlined text-[16px] text-primary-container mt-0.5">location_on</span>{branch.address}
+                <SvgIcon name="location_on" className="text-[16px] text-primary-container mt-0.5" />{branch.address}
               </p>
               <p className="text-sm text-on-surface-variant pl-6">{branch.city}, {branch.state}</p>
               <p className="text-sm text-on-surface-variant flex items-center gap-2 pl-6">
-                <span className="material-symbols-outlined text-[16px] text-tertiary">schedule</span>{branch.opening_hours}
+                <SvgIcon name="schedule" className="text-[16px] text-tertiary" />{branch.opening_hours}
               </p>
               <p className="text-sm text-on-surface-variant flex items-center gap-2 pl-6">
-                <span className="material-symbols-outlined text-[16px] text-primary-container">call</span>{branch.phone}
+                <SvgIcon name="call" className="text-[16px] text-primary-container" />{branch.phone}
               </p>
             </div>
           </Reveal>

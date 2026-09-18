@@ -1,3 +1,4 @@
+import SvgIcon from './ui/SvgIcon';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Menu, X } from 'lucide-react';
@@ -127,7 +128,7 @@ export default function Navbar() {
               <Link to="/login" className={`hidden sm:inline-flex items-center text-sm font-medium px-3 py-1.5 transition-colors ${overHero ? 'text-primary-fixed-dim hover:text-white' : bodyText}`}>Sign In</Link>
               <Link to="/register" className="inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-all shadow-[0_2px_8px_rgba(0,82,255,0.25)]">
                 <span>Get Started Free</span>
-                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <SvgIcon name="arrow_forward" className="text-[16px]" />
               </Link>
             </>
           )}

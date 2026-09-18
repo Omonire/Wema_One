@@ -56,7 +56,7 @@ export default function CustomerDashboard() {
           <Reveal key={action.to} delay={i * 70}>
             <Link to={action.to} className="block bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-center">
               <div className={`w-10 h-10 rounded-xl ${action.bg} flex items-center justify-center mx-auto mb-2`}>
-                <span className={`material-symbols-outlined ${action.color} text-[20px]`}>{action.icon}</span>
+                <SvgIcon name={action.icon} size={20} className={action.color} />
               </div>
               <span className="text-sm font-medium text-on-surface">{action.label}</span>
             </Link>
