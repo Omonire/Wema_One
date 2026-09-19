@@ -1,7 +1,7 @@
 import {
   ArrowRight, BadgeCheck, Banknote, BarChart3, Brain, Building2,
   CalendarClock, CheckCircle2, ChevronDown, ChevronUp, ClipboardCheck,
-  ClipboardX, Clock, CreditCard, Cross, CircleHelp, Eye, Fingerprint,
+  ClipboardX, CreditCard, Cross, CircleHelp, Eye, Fingerprint,
   Footprints, Gauge, Headset, Hourglass, Landmark, Layers, LayoutGrid, Lock,
   MapPin, Megaphone, MessagesSquare, Phone, PlusCircle, RefreshCw, Route,
   Search, Send, Share2, Shield, ShieldCheck, Signal, Smartphone, Smile,

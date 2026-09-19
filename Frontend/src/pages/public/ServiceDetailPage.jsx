@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import Reveal from '../../components/ScrollReveal';
 import { LoadingPage, Card, CardTitle, PrimaryButton, Field, Select, Input, Alert } from '../../components/ui/Elements';
 import SvgIcon from '../../components/ui/SvgIcon';
 

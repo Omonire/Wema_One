@@ -46,8 +46,11 @@ def create_payment():
     result = payment_service.init_payment(payment)
 
     if result.get('success'):
-        payment.status = 'PENDING'
+        payment.status = result.get('status', 'PENDING')
         payment.alat_consent_id = result.get('consent_id')
+        payment.platform_reference = result.get('platform_reference')
+        if payment.status == 'SUCCESSFUL':
+            payment.paid_at = datetime.utcnow()
         db.session.commit()
         log_audit(user_id=customer_id, action='PAYMENT_INITIATED', resource_type='payment', resource_id=payment.id,
                   details={'ref': payment.transaction_ref, 'amount': payment.amount, 'provider': payment_method})

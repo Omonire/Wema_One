@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import Reveal from '../../components/ScrollReveal';
 import { StatusBadge, LoadingPage, Card, CardTitle } from '../../components/ui/Elements';
+import SvgIcon from '../../components/ui/SvgIcon';
 
 export default function CustomerDashboard() {
   const { user } = useAuth();

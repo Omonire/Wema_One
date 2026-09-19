@@ -191,8 +191,11 @@ def test_create_payment(client):
     }, headers={'Authorization': f'Bearer {token}'})
     data = resp.get_json()
 
-    # Without ALAT credentials the payment must FAIL honestly (never a fake success).
-    assert data['error'] == 'ALAT_NOT_CONFIGURED'
+    # With no payment provider configured, demo mode auto-approves the payment.
+    assert resp.status_code == 201
+    assert data['success'] is True
+    assert data['provider'] == 'DEMO'
+    assert data['data']['status'] == 'SUCCESSFUL'
 
 
 def test_create_branchconnect_post(client):

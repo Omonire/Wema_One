@@ -70,9 +70,14 @@ export default function Reveal({
 
 /** Staggered grid helper: maps children with incremental delays. */
 export function RevealGroup({ children, stagger = 80, className = '', ...rest }) {
+  const items = Array.isArray(children) ? children : [children];
   return (
-    <Reveal className={className} {...rest}>
-      {children}
-    </Reveal>
+    <>
+      {items.map((child, i) =>
+        child != null
+          ? <Reveal key={i} className={className} delay={i * stagger} {...rest}>{child}</Reveal>
+          : null
+      )}
+    </>
   );
 }
