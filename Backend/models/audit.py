@@ -6,6 +6,7 @@ class AuditLog(db.Model):
     __tablename__ = 'audit_logs'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     action = db.Column(db.String(100), nullable=False)
     resource_type = db.Column(db.String(50))

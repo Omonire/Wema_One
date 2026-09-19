@@ -3,11 +3,16 @@ from flask import request
 from models.audit import AuditLog
 
 
-def log_audit(user_id=None, action='', resource_type=None, resource_id=None, details=None):
+def log_audit(user_id=None, action='', resource_type=None, resource_id=None, details=None, organization_id=None):
     """Write an audit trail entry. Safe to call anywhere; never raises."""
     try:
+        if organization_id is None and user_id:
+            from models.user import User
+            user = db.session.get(User, int(user_id))
+            organization_id = user.organization_id if user else None
         entry = AuditLog(
             user_id=user_id,
+            organization_id=organization_id,
             action=action,
             resource_type=resource_type,
             resource_id=resource_id,

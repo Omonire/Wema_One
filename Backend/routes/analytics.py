@@ -11,6 +11,7 @@ from models.document import Document, DocumentVerification
 from models.payment import Payment
 from models.feedback import Feedback, FeedbackAnalysis
 from models.branchconnect import BranchPost, BranchSolution, SolutionUsage
+from services.tenant import tenant_org_id
 
 analytics_bp = Blueprint('analytics', __name__)
 
@@ -18,43 +19,47 @@ analytics_bp = Blueprint('analytics', __name__)
 @analytics_bp.route('/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
-    total_customers = User.query.filter_by(role='CUSTOMER').count()
-    total_branches = Branch.query.filter_by(is_active=True).count()
-    total_services = Service.query.filter_by(is_active=True).count()
-    total_appointments = Appointment.query.count()
-    active_appointments = Appointment.query.filter_by(status='SCHEDULED').count()
-    total_queue_tickets = QueueTicket.query.count()
+    org = tenant_org_id()
+    total_customers = User.query.filter_by(role='CUSTOMER', organization_id=org).count()
+    total_branches = Branch.query.filter_by(is_active=True, organization_id=org).count()
+    total_services = Service.query.filter_by(is_active=True, organization_id=org).count()
+    total_appointments = Appointment.query.filter_by(organization_id=org).count()
+    active_appointments = Appointment.query.filter_by(status='SCHEDULED', organization_id=org).count()
+    total_queue_tickets = QueueTicket.query.filter_by(organization_id=org).count()
     active_queue = QueueTicket.query.filter(
+        QueueTicket.organization_id == org,
         QueueTicket.status.in_(['WAITING', 'CALLED', 'IN_SERVICE'])
     ).count()
 
-    total_documents = Document.query.count()
-    verified_docs = Document.query.filter_by(status='VERIFIED').count()
-    action_required = Document.query.filter_by(status='ACTION_REQUIRED').count()
+    total_documents = Document.query.filter_by(organization_id=org).count()
+    verified_docs = Document.query.filter_by(status='VERIFIED', organization_id=org).count()
+    action_required = Document.query.filter_by(status='ACTION_REQUIRED', organization_id=org).count()
     doc_verification_rate = (verified_docs / total_documents * 100) if total_documents > 0 else 0
 
-    total_payments = Payment.query.count()
-    successful_payments = Payment.query.filter_by(status='SUCCESSFUL').count()
-    total_revenue = db.session.query(func.sum(Payment.amount)).filter_by(status='SUCCESSFUL').scalar() or 0
+    total_payments = Payment.query.filter_by(organization_id=org).count()
+    successful_payments = Payment.query.filter_by(status='SUCCESSFUL', organization_id=org).count()
+    total_revenue = db.session.query(func.sum(Payment.amount)).filter_by(
+        status='SUCCESSFUL', organization_id=org).scalar() or 0
 
-    total_feedback = Feedback.query.count()
+    total_feedback = Feedback.query.filter_by(organization_id=org).count()
     sentiment_data = db.session.query(
         FeedbackAnalysis.sentiment, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.sentiment).all()
+    ).join(Feedback).filter(Feedback.organization_id == org).group_by(FeedbackAnalysis.sentiment).all()
 
     category_data = db.session.query(
         FeedbackAnalysis.category, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.category).order_by(
+    ).join(Feedback).filter(Feedback.organization_id == org).group_by(
+        FeedbackAnalysis.category).order_by(
         func.count(FeedbackAnalysis.id).desc()
     ).limit(10).all()
 
     avg_rating = db.session.query(func.avg(Feedback.rating)).filter(
-        Feedback.rating.isnot(None)
+        Feedback.rating.isnot(None), Feedback.organization_id == org
     ).scalar()
 
-    total_posts = BranchPost.query.count()
-    total_solutions = BranchSolution.query.count()
-    total_adoptions = SolutionUsage.query.count()
+    total_posts = BranchPost.query.filter_by(organization_id=org).count()
+    total_solutions = BranchSolution.query.filter_by(organization_id=org).count()
+    total_adoptions = SolutionUsage.query.filter_by(organization_id=org).count()
 
     sentiment_dict = {s: c for s, c in sentiment_data if s}
     positive = sentiment_dict.get('Positive', 0)
@@ -105,9 +110,11 @@ def dashboard():
 @analytics_bp.route('/insights', methods=['GET'])
 @jwt_required()
 def insights():
+    org = tenant_org_id()
     top_complaints = db.session.query(
         FeedbackAnalysis.topic, func.count(FeedbackAnalysis.id)
     ).join(Feedback).filter(
+        Feedback.organization_id == org,
         FeedbackAnalysis.sentiment == 'Negative'
     ).group_by(FeedbackAnalysis.topic).order_by(
         func.count(FeedbackAnalysis.id).desc()
@@ -115,14 +122,16 @@ def insights():
 
     common_doc_issues = db.session.query(
         DocumentVerification.overall_status, func.count(DocumentVerification.id)
+    ).join(Document).filter(
+        Document.organization_id == org
     ).group_by(DocumentVerification.overall_status).all()
 
     branch_performance = db.session.query(
         Branch.name,
         func.count(Appointment.id)
-    ).join(Appointment, Appointment.branch_id == Branch.id).group_by(
-        Branch.name
-    ).order_by(func.count(Appointment.id).desc()).all()
+    ).join(Appointment, Appointment.branch_id == Branch.id).filter(
+        Appointment.organization_id == org
+    ).group_by(Branch.name).order_by(func.count(Appointment.id).desc()).all()
 
     insights_list = []
     if top_complaints:
@@ -161,23 +170,25 @@ def insights():
 @analytics_bp.route('/branch/<int:branch_id>', methods=['GET'])
 @jwt_required()
 def branch_analytics(branch_id):
-    branch = Branch.query.get_or_404(branch_id)
+    org = tenant_org_id()
+    branch = Branch.query.filter_by(id=branch_id, organization_id=org).first_or_404()
 
-    appointments = Appointment.query.filter_by(branch_id=branch_id).count()
-    queue_tickets = QueueTicket.query.filter_by(branch_id=branch_id).count()
-    completed = QueueTicket.query.filter_by(branch_id=branch_id, status='COMPLETED').count()
+    appointments = Appointment.query.filter_by(branch_id=branch_id, organization_id=org).count()
+    queue_tickets = QueueTicket.query.filter_by(branch_id=branch_id, organization_id=org).count()
+    completed = QueueTicket.query.filter_by(branch_id=branch_id, organization_id=org, status='COMPLETED').count()
 
     avg_wait = db.session.query(func.avg(QueueTicket.estimated_wait_minutes)).filter_by(
-        branch_id=branch_id
+        branch_id=branch_id, organization_id=org
     ).filter(QueueTicket.status == 'COMPLETED').scalar()
 
     branch_feedback = db.session.query(
         FeedbackAnalysis.sentiment, func.count(FeedbackAnalysis.id)
     ).join(Feedback).filter(
-        Feedback.branch_id == branch_id
+        Feedback.branch_id == branch_id,
+        Feedback.organization_id == org
     ).group_by(FeedbackAnalysis.sentiment).all()
 
-    solutions = BranchPost.query.filter_by(branch_id=branch_id).count()
+    solutions = BranchPost.query.filter_by(branch_id=branch_id, organization_id=org).count()
 
     return jsonify({
         'success': True,

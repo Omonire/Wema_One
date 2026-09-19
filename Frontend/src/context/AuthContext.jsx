@@ -34,13 +34,20 @@ export function AuthProvider({ children }) {
     return res.data;
   };
 
+  const createWorkspace = async (data) => {
+    const res = await api.post('/organizations/', data);
+    localStorage.setItem('luma_token', res.data.token);
+    setUser(res.data.user);
+    return res.data;
+  };
+
   const logout = () => {
     localStorage.removeItem('luma_token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, createWorkspace, logout }}>
       {children}
     </AuthContext.Provider>
   );

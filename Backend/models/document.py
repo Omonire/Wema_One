@@ -6,9 +6,9 @@ class Document(db.Model):
     __tablename__ = 'documents'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
-    requirement_name = db.Column(db.String(120))
     original_filename = db.Column(db.String(255), nullable=False)
     stored_filename = db.Column(db.String(255), nullable=False)
     file_size = db.Column(db.Integer)
@@ -22,6 +22,7 @@ class Document(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'organization_id': self.organization_id,
             'customer_id': self.customer_id,
             'service_id': self.service_id,
             'requirement_name': self.requirement_name,

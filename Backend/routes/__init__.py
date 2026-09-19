@@ -14,6 +14,7 @@ from .notifications import notifications_bp
 from .audit_logs import audit_logs_bp
 from .system import system_bp
 from .social_studio import social_studio_bp
+from .organizations import organizations_bp
 
 def register_routes(app):
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -32,3 +33,4 @@ def register_routes(app):
     app.register_blueprint(audit_logs_bp, url_prefix='/api/audit-logs')
     app.register_blueprint(system_bp, url_prefix='/api/system')
     app.register_blueprint(social_studio_bp, url_prefix='/api/social-studio')
+    app.register_blueprint(organizations_bp, url_prefix='/api/organizations')

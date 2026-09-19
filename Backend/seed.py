@@ -12,6 +12,7 @@ from models.document import Document, DocumentVerification
 from models.payment import Payment
 from models.feedback import Feedback, FeedbackAnalysis
 from models.branchconnect import BranchPost, BranchSolution, SolutionUsage
+from models.organization import Organization, Subscription
 from datetime import date, time, datetime, timedelta
 import random
 
@@ -26,6 +27,16 @@ def seed(app, drop=True, only_if_empty=False):
             print("Database already contains data; skipping seed.")
             return False
 
+        print("Seeding organization...")
+        org = Organization.query.filter_by(slug='luma').first()
+        if not org:
+            org = Organization(name='Luma', slug='luma', type='BANK', plan='STARTER',
+                               welcome_message='Welcome to Luma Bank. We make banking effortless.')
+            db.session.add(org)
+            db.session.flush()
+        if not org.subscription:
+            db.session.add(Subscription(organization_id=org.id, plan=org.plan, status='ACTIVE'))
+
         print("Seeding users...")
         users = []
         roles_data = [
@@ -33,7 +44,8 @@ def seed(app, drop=True, only_if_empty=False):
             ('superadmin@luma.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
         ]
         for email, first, last, role, bid in roles_data:
-            u = User(email=email, first_name=first, last_name=last, role=role, phone='08012345678')
+            u = User(email=email, first_name=first, last_name=last, role=role, phone='08012345678',
+                     organization_id=org.id)
             u.set_password('password123')
             users.append(u)
 
@@ -47,6 +59,7 @@ def seed(app, drop=True, only_if_empty=False):
         branches = []
         for name, addr, city, state in branches_data:
             b = Branch(name=name, address=addr, city=city, state=state,
+                       organization_id=org.id,
                        phone=f'01-{random.randint(1000000, 9999999)}',
                        email=f'{name.split()[0].lower()}@luma.com',
                        latitude=random.uniform(6.0, 7.5),
@@ -63,7 +76,8 @@ def seed(app, drop=True, only_if_empty=False):
         ]
         for email, first, last, role, bidx in bo_emails:
             u = User(email=email, first_name=first, last_name=last, role=role,
-                     branch_id=branches[bidx].id, phone=f'080{random.randint(10000000, 99999999)}')
+                     branch_id=branches[bidx].id, organization_id=org.id,
+                     phone=f'080{random.randint(10000000, 99999999)}')
             u.set_password('password123')
             users.append(u)
 
@@ -117,6 +131,7 @@ def seed(app, drop=True, only_if_empty=False):
         for name, desc, cat, est_time, fee, features, tagline, icon, reqs in services_data:
             s = Service(name=name, description=desc, category=cat,
                        estimated_time_minutes=est_time, fee=fee,
+                       organization_id=org.id,
                        tagline=tagline, icon=icon)
             s.set_features(features)
             db.session.add(s)
@@ -163,6 +178,7 @@ def seed(app, drop=True, only_if_empty=False):
         customers = []
         for email, first, last in customer_data:
             u = User(email=email, first_name=first, last_name=last, role='CUSTOMER',
+                     organization_id=org.id,
                      phone=f'080{random.randint(10000000, 99999999)}')
             u.set_password('password123')
             customers.append(u)
@@ -178,6 +194,7 @@ def seed(app, drop=True, only_if_empty=False):
             service = services[i % len(services)]
 
             appt = Appointment(
+                organization_id=org.id,
                 customer_id=customer.id,
                 branch_id=branch.id,
                 service_id=service.id,
@@ -190,6 +207,7 @@ def seed(app, drop=True, only_if_empty=False):
 
             ticket_num = f"LUM-{random.randint(1000, 9999)}"
             ticket = QueueTicket(
+                organization_id=org.id,
                 ticket_number=ticket_num,
                 customer_id=customer.id,
                 branch_id=branch.id,
@@ -212,6 +230,7 @@ def seed(app, drop=True, only_if_empty=False):
         for i, customer in enumerate(customers):
             for fname, mime, status in doc_templates:
                 doc = Document(
+                    organization_id=org.id,
                     customer_id=customer.id,
                     service_id=services[i % len(services)].id,
                     requirement_name=fname.split('.')[0],
@@ -241,6 +260,7 @@ def seed(app, drop=True, only_if_empty=False):
         print("Seeding payments...")
         for i, customer in enumerate(customers):
             payment = Payment(
+                organization_id=org.id,
                 customer_id=customer.id,
                 service_id=services[i % len(services)].id,
                 branch_id=branches[i % len(branches)].id,
@@ -270,6 +290,7 @@ def seed(app, drop=True, only_if_empty=False):
 
         for i, (content, fb_type, sentiment) in enumerate(feedback_data):
             fb = Feedback(
+                organization_id=org.id,
                 customer_id=customers[i % len(customers)].id,
                 branch_id=branches[i % len(branches)].id,
                 service_id=services[i % len(services)].id,
@@ -343,11 +364,12 @@ def seed(app, drop=True, only_if_empty=False):
 
         for post_data in posts_data:
             solution_data = post_data.pop('solution')
-            post = BranchPost(**post_data)
+            post = BranchPost(organization_id=org.id, **post_data)
             db.session.add(post)
             db.session.flush()
             if solution_data:
                 sol = BranchSolution(
+                    organization_id=org.id,
                     post_id=post.id,
                     problem=solution_data['problem'],
                     solution=solution_data['solution'],

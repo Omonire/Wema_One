@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.feedback import Feedback, FeedbackAnalysis
 from services.social_pulse import SocialPulseService
+from services.tenant import tenant_org_id
 
 feedback_bp = Blueprint('feedback', __name__)
 
@@ -17,6 +18,7 @@ def create_feedback():
         return jsonify({'success': False, 'message': 'Content is required'}), 400
 
     fb = Feedback(
+        organization_id=tenant_org_id(),
         customer_id=customer_id,
         branch_id=data.get('branch_id'),
         service_id=data.get('service_id'),
@@ -58,8 +60,9 @@ def get_feedback():
     branch_id = request.args.get('branch_id', type=int)
     sentiment = request.args.get('sentiment')
     fb_type = request.args.get('type')
+    org_id = tenant_org_id()
 
-    query = Feedback.query
+    query = Feedback.query.filter_by(organization_id=org_id)
     if branch_id:
         query = query.filter_by(branch_id=branch_id)
     if fb_type:
@@ -74,7 +77,7 @@ def get_feedback():
 @feedback_bp.route('/<int:fb_id>', methods=['GET'])
 @jwt_required()
 def get_single_feedback(fb_id):
-    fb = Feedback.query.get_or_404(fb_id)
+    fb = Feedback.query.filter_by(id=fb_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': fb.to_dict()})
 
 
@@ -91,27 +94,28 @@ def my_feedback():
 def feedback_analysis():
     from sqlalchemy import func
     branch_id = request.args.get('branch_id', type=int)
+    org_id = tenant_org_id()
 
-    base_query = Feedback.query
+    base_query = Feedback.query.filter_by(organization_id=org_id)
     if branch_id:
         base_query = base_query.filter_by(branch_id=branch_id)
 
     total = base_query.count()
     sentiments = db.session.query(
         FeedbackAnalysis.sentiment, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.sentiment).all()
+    ).join(Feedback).filter(Feedback.organization_id == org_id).group_by(FeedbackAnalysis.sentiment).all()
 
     categories = db.session.query(
         FeedbackAnalysis.category, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.category).order_by(func.count(FeedbackAnalysis.id).desc()).all()
+    ).join(Feedback).filter(Feedback.organization_id == org_id).group_by(FeedbackAnalysis.category).order_by(func.count(FeedbackAnalysis.id).desc()).all()
 
     priorities = db.session.query(
         FeedbackAnalysis.priority, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.priority).all()
+    ).join(Feedback).filter(Feedback.organization_id == org_id).group_by(FeedbackAnalysis.priority).all()
 
     topics = db.session.query(
         FeedbackAnalysis.topic, func.count(FeedbackAnalysis.id)
-    ).join(Feedback).group_by(FeedbackAnalysis.topic).order_by(func.count(FeedbackAnalysis.id).desc()).limit(10).all()
+    ).join(Feedback).filter(Feedback.organization_id == org_id).group_by(FeedbackAnalysis.topic).order_by(func.count(FeedbackAnalysis.id).desc()).limit(10).all()
 
     return jsonify({
         'success': True,

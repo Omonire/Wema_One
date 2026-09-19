@@ -6,6 +6,7 @@ class Feedback(db.Model):
     __tablename__ = 'feedback'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'))
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
@@ -22,6 +23,7 @@ class Feedback(db.Model):
     def to_dict(self):
         data = {
             'id': self.id,
+            'organization_id': self.organization_id,
             'customer_id': self.customer_id,
             'branch_id': self.branch_id,
             'service_id': self.service_id,

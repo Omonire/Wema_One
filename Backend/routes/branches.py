@@ -3,25 +3,26 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.branch import Branch, BranchService
 from models.service import Service
+from services.tenant import resolve_public_org_id
 
 branches_bp = Blueprint('branches', __name__)
 
 
 @branches_bp.route('/', methods=['GET'])
 def get_branches():
-    branches = Branch.query.filter_by(is_active=True).all()
+    branches = Branch.query.filter_by(is_active=True, organization_id=resolve_public_org_id()).all()
     return jsonify({'success': True, 'data': [b.to_dict() for b in branches]})
 
 
 @branches_bp.route('/<int:branch_id>', methods=['GET'])
 def get_branch(branch_id):
-    branch = Branch.query.get_or_404(branch_id)
+    branch = Branch.query.filter_by(id=branch_id, organization_id=resolve_public_org_id()).first_or_404()
     return jsonify({'success': True, 'data': branch.to_dict()})
 
 
 @branches_bp.route('/<int:branch_id>/services', methods=['GET'])
 def get_branch_services(branch_id):
-    Branch.query.get_or_404(branch_id)
+    Branch.query.filter_by(id=branch_id, organization_id=resolve_public_org_id()).first_or_404()
     bs = BranchService.query.filter_by(branch_id=branch_id, is_available=True).all()
     return jsonify({'success': True, 'data': [s.to_dict() for s in bs]})
 
@@ -29,6 +30,7 @@ def get_branch_services(branch_id):
 @branches_bp.route('/<int:branch_id>/queue', methods=['GET'])
 def get_branch_queue(branch_id):
     from models.queue import QueueTicket
+    Branch.query.filter_by(id=branch_id, organization_id=resolve_public_org_id()).first_or_404()
     tickets = QueueTicket.query.filter_by(branch_id=branch_id).filter(
         QueueTicket.status.in_(['WAITING', 'CALLED', 'IN_SERVICE'])
     ).order_by(QueueTicket.position).all()
@@ -57,6 +59,7 @@ def create_branch():
 
     data = request.get_json()
     branch = Branch(
+        organization_id=user.organization_id,
         name=data['name'],
         address=data['address'],
         city=data['city'],

@@ -5,6 +5,7 @@ import uuid
 from extensions import db
 from models.document import Document, DocumentVerification
 from services.document_verification import DocumentVerificationService
+from services.tenant import tenant_org_id
 
 documents_bp = Blueprint('documents', __name__)
 
@@ -49,6 +50,7 @@ def upload_document():
     file.save(file_path)
 
     doc = Document(
+        organization_id=tenant_org_id(),
         customer_id=customer_id,
         service_id=request.form.get('service_id', type=int),
         requirement_name=request.form.get('requirement_name'),
@@ -105,7 +107,7 @@ def get_documents():
 @documents_bp.route('/<int:doc_id>', methods=['GET'])
 @jwt_required()
 def get_document(doc_id):
-    doc = Document.query.get_or_404(doc_id)
+    doc = Document.query.filter_by(id=doc_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': doc.to_dict()})
 
 
@@ -120,7 +122,7 @@ def get_service_documents(service_id):
 @documents_bp.route('/<int:doc_id>', methods=['DELETE'])
 @jwt_required()
 def delete_document(doc_id):
-    doc = Document.query.get_or_404(doc_id)
+    doc = Document.query.filter_by(id=doc_id, organization_id=tenant_org_id()).first_or_404()
     file_path = os.path.join(UPLOAD_FOLDER, doc.stored_filename)
     if os.path.exists(file_path):
         os.remove(file_path)

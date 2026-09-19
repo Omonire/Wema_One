@@ -6,6 +6,7 @@ class BranchPost(db.Model):
     __tablename__ = 'branch_posts'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     post_type = db.Column(db.String(30), nullable=False, default='SOLUTION')
@@ -24,6 +25,7 @@ class BranchPost(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'organization_id': self.organization_id,
             'branch_id': self.branch_id,
             'author_id': self.author_id,
             'post_type': self.post_type,
@@ -43,6 +45,7 @@ class BranchSolution(db.Model):
     __tablename__ = 'branch_solutions'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     post_id = db.Column(db.Integer, db.ForeignKey('branch_posts.id'), nullable=False)
     problem = db.Column(db.Text, nullable=False)
     solution = db.Column(db.Text, nullable=False)
@@ -69,6 +72,7 @@ class SolutionUsage(db.Model):
     __tablename__ = 'solution_usage'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     solution_id = db.Column(db.Integer, db.ForeignKey('branch_solutions.id'), nullable=False)
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
     used_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)

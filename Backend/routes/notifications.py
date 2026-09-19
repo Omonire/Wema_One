@@ -4,6 +4,7 @@ from extensions import db
 from models.user import User
 from models.notification import Notification
 from datetime import datetime
+from services.tenant import tenant_org_id
 
 notifications_bp = Blueprint('notifications', __name__)
 
@@ -90,13 +91,14 @@ def broadcast():
     type_ = data.get('type', 'INFO')
     link = data.get('link')
     role = data.get('role')
+    org_id = tenant_org_id()
 
-    query = User.query
+    query = User.query.filter_by(organization_id=org_id)
     if role:
         query = query.filter_by(role=role)
     users = query.all()
 
-    notifications = [Notification(user_id=u.id, title=title, message=message, type=type_, link=link) for u in users]
+    notifications = [Notification(organization_id=org_id, user_id=u.id, title=title, message=message, type=type_, link=link) for u in users]
     db.session.add_all(notifications)
     db.session.commit()
     return jsonify({'success': True, 'message': f'Broadcast sent to {len(users)} users'}), 201

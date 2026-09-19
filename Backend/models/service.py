@@ -7,6 +7,7 @@ class Service(db.Model):
     __tablename__ = 'services'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text)
     category = db.Column(db.String(80), nullable=False)
@@ -38,6 +39,7 @@ class Service(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'organization_id': self.organization_id,
             'name': self.name,
             'description': self.description,
             'category': self.category,

@@ -6,6 +6,7 @@ class Payment(db.Model):
     __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'))
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'))
@@ -30,6 +31,7 @@ class Payment(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'organization_id': self.organization_id,
             'customer_id': self.customer_id,
             'service_id': self.service_id,
             'branch_id': self.branch_id,

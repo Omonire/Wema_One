@@ -6,6 +6,7 @@ class QueueTicket(db.Model):
     __tablename__ = 'queue_tickets'
 
     id = db.Column(db.Integer, primary_key=True)
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     ticket_number = db.Column(db.String(20), nullable=False, unique=True, index=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
@@ -26,6 +27,7 @@ class QueueTicket(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'organization_id': self.organization_id,
             'ticket_number': self.ticket_number,
             'customer_id': self.customer_id,
             'branch_id': self.branch_id,

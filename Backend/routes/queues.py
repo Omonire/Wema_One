@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
 from extensions import db
 from models.queue import QueueTicket
+from services.tenant import tenant_org_id
 import random
 import string
 
@@ -48,6 +49,7 @@ def create_queue_ticket():
     estimated_service_time = (datetime.now() + timedelta(minutes=estimated_wait)).strftime('%I:%M %p')
 
     ticket = QueueTicket(
+        organization_id=tenant_org_id(),
         ticket_number=ticket_number,
         customer_id=customer_id,
         branch_id=branch_id,
@@ -71,7 +73,7 @@ def create_queue_ticket():
 @queues_bp.route('/<int:ticket_id>', methods=['GET'])
 @jwt_required()
 def get_queue_ticket(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ahead = QueueTicket.query.filter_by(branch_id=ticket.branch_id, service_id=ticket.service_id).filter(
         QueueTicket.status == 'WAITING',
         QueueTicket.position < ticket.position
@@ -84,7 +86,7 @@ def get_queue_ticket(ticket_id):
 @queues_bp.route('/<int:ticket_id>/check-in', methods=['POST'])
 @jwt_required()
 def check_in(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ticket.status = 'CHECKED_IN'
     ticket.checked_in_at = datetime.utcnow()
     db.session.commit()
@@ -94,7 +96,7 @@ def check_in(ticket_id):
 @queues_bp.route('/<int:ticket_id>/call', methods=['POST'])
 @jwt_required()
 def call_next(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ticket.status = 'CALLED'
     ticket.called_at = datetime.utcnow()
     db.session.commit()
@@ -104,7 +106,7 @@ def call_next(ticket_id):
 @queues_bp.route('/<int:ticket_id>/serve', methods=['POST'])
 @jwt_required()
 def serve(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ticket.status = 'IN_SERVICE'
     ticket.served_at = datetime.utcnow()
     db.session.commit()
@@ -114,7 +116,7 @@ def serve(ticket_id):
 @queues_bp.route('/<int:ticket_id>/complete', methods=['POST'])
 @jwt_required()
 def complete(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ticket.status = 'COMPLETED'
     ticket.completed_at = datetime.utcnow()
     db.session.commit()
@@ -124,7 +126,7 @@ def complete(ticket_id):
 @queues_bp.route('/<int:ticket_id>/cancel', methods=['POST'])
 @jwt_required()
 def cancel_ticket(ticket_id):
-    ticket = QueueTicket.query.get_or_404(ticket_id)
+    ticket = QueueTicket.query.filter_by(id=ticket_id, organization_id=tenant_org_id()).first_or_404()
     ticket.status = 'CANCELLED'
     db.session.commit()
     return jsonify({'success': True, 'data': ticket.to_dict(), 'message': 'Ticket cancelled'})

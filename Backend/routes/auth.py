@@ -2,13 +2,28 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
+from models.organization import Organization
 from services.audit_service import log_audit
 from services.security import (
     limiter, record_failed_login, clear_failed_logins,
     validate_password, validate_email
 )
+from services.tenant import get_org_by_slug_or_id
 
 auth_bp = Blueprint('auth', __name__)
+
+
+def _resolve_registration_org(data):
+    org = None
+    org_id = data.get('organization_id')
+    slug = data.get('organization_slug') or data.get('org_slug')
+    if org_id:
+        org = Organization.query.get(int(org_id)) if str(org_id).isdigit() else None
+    elif slug:
+        org = get_org_by_slug_or_id(slug)
+    if not org:
+        org = Organization.query.order_by(Organization.id).first()
+    return org
 
 
 @auth_bp.route('/register', methods=['POST'])
@@ -38,12 +53,14 @@ def register():
     if User.query.filter_by(email=email).first():
         return jsonify({'success': False, 'message': 'Email already registered'}), 409
 
+    org = _resolve_registration_org(data)
     user = User(
         email=email,
         first_name=data['first_name'],
         last_name=data['last_name'],
         phone=data.get('phone'),
         role=data.get('role', 'CUSTOMER'),
+        organization_id=org.id if org else None,
         branch_id=data.get('branch_id')
     )
     user.set_password(password)
@@ -51,7 +68,7 @@ def register():
     db.session.commit()
 
     log_audit(user_id=user.id, action='REGISTER', resource_type='auth', details={'email': email})
-    token = create_access_token(identity=str(user.id))
+    token = create_access_token(identity=str(user.id), additional_claims={'org_id': user.organization_id})
     return jsonify({
         'success': True,
         'data': {'user': user.to_dict(), 'token': token},
@@ -84,7 +101,7 @@ def login():
 
     clear_failed_logins(email)
     log_audit(user_id=user.id, action='LOGIN', resource_type='auth', details={'email': email})
-    token = create_access_token(identity=str(user.id))
+    token = create_access_token(identity=str(user.id), additional_claims={'org_id': user.organization_id})
     return jsonify({
         'success': True,
         'data': {'user': user.to_dict(), 'token': token},

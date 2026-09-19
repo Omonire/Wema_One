@@ -13,6 +13,7 @@ class User(db.Model):
     last_name = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(20))
     role = db.Column(db.String(20), nullable=False, default='CUSTOMER')
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'), nullable=True, index=True)
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -40,6 +41,7 @@ class User(db.Model):
             'last_name': self.last_name,
             'phone': self.phone,
             'role': self.role,
+            'organization_id': self.organization_id,
             'branch_id': self.branch_id,
             'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,

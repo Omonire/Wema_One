@@ -5,6 +5,7 @@ from extensions import db
 from models.user import User
 from models.feedback import Feedback
 from services.social_pulse import SocialPulseService
+from services.tenant import tenant_org_id
 
 social_studio_bp = Blueprint('social_studio', __name__)
 
@@ -25,8 +26,9 @@ def require_admin(f):
 @require_admin
 def overview():
     branch_id = request.args.get('branch_id', type=int)
+    org_id = tenant_org_id()
 
-    query = Feedback.query.filter(Feedback.analysis.has())
+    query = Feedback.query.filter(Feedback.analysis.has(), Feedback.organization_id == org_id)
     if branch_id:
         query = query.filter_by(branch_id=branch_id)
 
@@ -91,8 +93,9 @@ def list_feedback():
     priority = request.args.get('priority')
     fb_type = request.args.get('type')
     branch_id = request.args.get('branch_id', type=int)
+    org_id = tenant_org_id()
 
-    query = Feedback.query.filter(Feedback.analysis.has())
+    query = Feedback.query.filter(Feedback.analysis.has(), Feedback.organization_id == org_id)
     if sentiment:
         query = query.filter(Feedback.analysis.has(sentiment=sentiment))
     if priority:

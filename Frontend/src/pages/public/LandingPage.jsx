@@ -868,6 +868,66 @@ export default function LandingPage() {
       </section>
 
       {/* 8. FINAL CTA */}
+      <section className="w-full py-24 lg:py-32 px-6 lg:px-12 max-w-7xl mx-auto" id="pricing">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-surface-container-lowest text-primary font-data-mono-xs text-xs font-semibold border border-outline-variant/40 mb-5">
+            <span>LUMA FOR BUSINESS</span>
+          </div>
+          <h2 className="font-headline-lg text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">
+            One workspace for every service desk
+          </h2>
+          <p className="font-body-lg text-lg text-on-surface-variant leading-relaxed mt-3">
+            Banks, hospitals, telecoms, government offices — launch your branch in minutes with Luma.
+            Yield Management folks call it a queue killer. We call it Tuesday.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              name: 'Starter', price: 'Free', period: '14-day trial, then ₦0',
+              features: ['1 branch', 'Unlimited services', 'Digital queue + appointments', 'Up to 5 staff'], cta: 'Start Free',
+            },
+            {
+              name: 'Pro', price: '₦150k', period: '/year per branch', highlighted: true,
+              features: ['Unlimited branches', 'AI document verification', 'Feedback insights studio', 'Unlimited staff', 'Priority support'], cta: 'Start Trial',
+            },
+            {
+              name: 'Enterprise', price: 'Custom', period: 'tailored rollout',
+              features: ['Dedicated onboarding team', 'SSO & audit controls', 'Custom integrations', 'SLA & 24/7 support'], cta: 'Talk To Us',
+            },
+          ].map(plan => (
+            <div key={plan.name}
+              className={`relative rounded-2xl border p-7 flex flex-col ${plan.highlighted
+                ? 'bg-[#0A0D14] text-white border-transparent shadow-[0_12px_40px_rgba(0,82,255,0.25)]'
+                : 'bg-surface-container-lowest border-outline-variant/40'}`}>
+              {plan.highlighted && <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-primary-container text-white text-xs font-semibold font-data-mono-xs">MOST POPULAR</span>}
+              <h3 className={`font-headline-md text-xl font-bold ${plan.highlighted ? 'text-white' : 'text-on-surface'}`}>{plan.name}</h3>
+              <div className="mt-3 flex items-end gap-1">
+                <span className={`text-3xl font-extrabold font-headline-lg ${plan.highlighted ? 'text-white' : 'text-on-surface'}`}>{plan.price}</span>
+                <span className={`text-sm mb-1 ${plan.highlighted ? 'text-white/60' : 'text-on-surface-variant'}`}>{plan.period}</span>
+              </div>
+              <ul className="mt-6 space-y-3 flex-1">
+                {plan.features.map(f => (
+                  <li key={f} className={`flex items-start gap-2 text-sm ${plan.highlighted ? 'text-white/80' : 'text-on-surface-variant'}`}>
+                    <SvgIcon name="check_circle" className={`text-[18px] mt-0.5 ${plan.highlighted ? 'text-primary' : 'text-primary-container'}`} />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/workspace"
+                className={`mt-8 inline-flex items-center justify-center gap-2 h-11 rounded-lg text-sm font-semibold transition-all ${
+                  plan.highlighted
+                    ? 'bg-primary-container hover:bg-primary text-white shadow-[0_4px_14px_rgba(0,82,255,0.3)]'
+                    : 'bg-primary-container text-white hover:bg-primary shadow-[0_2px_8px_rgba(0,82,255,0.25)]'}`}>
+                {plan.cta}
+                <SvgIcon name="arrow_forward" size={16} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="w-full py-24 lg:py-32 px-6 lg:px-12 max-w-7xl mx-auto" id="get-started">
         <div className="relative bg-surface-container-highest/60 rounded-3xl border border-outline-variant/50 p-8 lg:p-16 overflow-hidden shadow-sm">
           <div className="relative z-10 max-w-2xl space-y-6">
@@ -885,18 +945,18 @@ export default function LandingPage() {
             </p>
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
-                to="/register"
+                to="/workspace"
                 className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary-container hover:bg-primary text-white text-base font-semibold transition-all shadow-[0_4px_14px_rgba(0,82,255,0.3)] hover:-translate-y-0.5"
               >
-                <span>Get Started Free</span>
+                <span>Create Your Workspace</span>
                 <SvgIcon name="arrow_forward" size={18} className="shrink-0" />
               </Link>
-              <a
-                href="#how-it-works"
+              <Link
+                to="/register"
                 className="inline-flex items-center justify-center gap-2 h-12 px-7 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-base font-semibold border border-outline-variant/60 shadow-sm transition-all"
               >
-                <span>See How It Works</span>
-              </a>
+                <span>Join Your Bank</span>
+              </Link>
             </div>
             <div className="pt-2 flex items-center gap-2 text-on-surface-variant font-data-mono-xs text-xs">
               <SvgIcon name="support_agent" className="text-primary-container text-[18px]" />

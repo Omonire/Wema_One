@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, date, time
 from extensions import db
 from models.appointment import Appointment
+from services.tenant import tenant_org_id, resolve_public_org_id
 
 appointments_bp = Blueprint('appointments', __name__)
 
@@ -25,6 +26,7 @@ def create_appointment():
         return jsonify({'success': False, 'message': 'Invalid date or time format'}), 400
 
     appointment = Appointment(
+        organization_id=tenant_org_id(),
         customer_id=customer_id,
         branch_id=data['branch_id'],
         service_id=data['service_id'],
@@ -58,14 +60,14 @@ def get_appointments():
 @appointments_bp.route('/<int:appt_id>', methods=['GET'])
 @jwt_required()
 def get_appointment(appt_id):
-    appointment = Appointment.query.get_or_404(appt_id)
+    appointment = Appointment.query.filter_by(id=appt_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': appointment.to_dict()})
 
 
 @appointments_bp.route('/<int:appt_id>/cancel', methods=['POST'])
 @jwt_required()
 def cancel_appointment(appt_id):
-    appointment = Appointment.query.get_or_404(appt_id)
+    appointment = Appointment.query.filter_by(id=appt_id, organization_id=tenant_org_id()).first_or_404()
     appointment.status = 'CANCELLED'
     db.session.commit()
     return jsonify({'success': True, 'data': appointment.to_dict(), 'message': 'Appointment cancelled'})
@@ -75,7 +77,10 @@ def cancel_appointment(appt_id):
 @jwt_required()
 def get_branch_appointments(branch_id):
     status = request.args.get('status')
-    query = Appointment.query.filter_by(branch_id=branch_id)
+    org_id = tenant_org_id()
+    from models.branch import Branch
+    Branch.query.filter_by(id=branch_id, organization_id=org_id).first_or_404()
+    query = Appointment.query.filter_by(branch_id=branch_id, organization_id=org_id)
     if status:
         query = query.filter_by(status=status)
     appointments = query.order_by(Appointment.appointment_date).all()
@@ -97,6 +102,7 @@ def get_available_slots():
         return jsonify({'success': False, 'message': 'Invalid date format'}), 400
 
     booked = Appointment.query.filter_by(
+        organization_id=resolve_public_org_id(),
         branch_id=branch_id, service_id=service_id, appointment_date=target_date
     ).filter(Appointment.status.in_(['SCHEDULED', 'CONFIRMED'])).all()
 

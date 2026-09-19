@@ -12,6 +12,7 @@ import ServiceDetailPage from './pages/public/ServiceDetailPage';
 import BranchesPage from './pages/public/BranchesPage';
 import AboutPage from './pages/public/AboutPage';
 import HelpPage from './pages/public/HelpPage';
+import CreateWorkspacePage from './pages/public/CreateWorkspacePage';
 
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import QueuePage from './pages/customer/QueuePage';
@@ -71,6 +72,7 @@ function Layout() {
           <Route path="/help" element={<HelpPage />} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+          <Route path="/workspace" element={<PublicRoute><CreateWorkspacePage /></PublicRoute>} />
 
           <Route path="/dashboard" element={<PrivateRoute><DashboardRouter /></PrivateRoute>} />
 

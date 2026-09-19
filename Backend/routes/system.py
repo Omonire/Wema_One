@@ -9,6 +9,7 @@ from models.user import User
 from models.branch import Branch
 from models.service import Service
 from models.queue import QueueTicket
+from services.tenant import resolve_public_org_id
 
 system_bp = Blueprint('system', __name__)
 
@@ -54,10 +55,13 @@ def info():
 
 @system_bp.route('/stats', methods=['GET'])
 def stats():
+    org_id = resolve_public_org_id()
     counts = {
-        'users': User.query.count(),
-        'branches': Branch.query.count(),
-        'services': Service.query.count(),
-        'active_queue_tickets': QueueTicket.query.filter(QueueTicket.status.in_(['WAITING', 'SERVING'])).count(),
+        'users': User.query.filter_by(organization_id=org_id).count(),
+        'branches': Branch.query.filter_by(organization_id=org_id).count(),
+        'services': Service.query.filter_by(organization_id=org_id).count(),
+        'active_queue_tickets': QueueTicket.query.filter(
+            QueueTicket.organization_id == org_id,
+            QueueTicket.status.in_(['WAITING', 'SERVING'])).count(),
     }
     return jsonify({'success': True, 'data': counts})

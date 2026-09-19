@@ -9,10 +9,12 @@ from .feedback import Feedback, FeedbackAnalysis
 from .branchconnect import BranchPost, BranchSolution, SolutionUsage
 from .notification import Notification
 from .audit import AuditLog
+from .organization import Organization, Subscription
 
 __all__ = [
     'User', 'Branch', 'BranchService', 'Service', 'ServiceRequirement',
     'Appointment', 'QueueTicket', 'Document', 'DocumentVerification',
     'Payment', 'Feedback', 'FeedbackAnalysis', 'BranchPost',
-    'BranchSolution', 'SolutionUsage', 'Notification', 'AuditLog'
+    'BranchSolution', 'SolutionUsage', 'Notification', 'AuditLog',
+    'Organization', 'Subscription'
 ]

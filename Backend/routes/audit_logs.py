@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.user import User
 from models.audit import AuditLog
+from services.tenant import tenant_org_id
 
 audit_logs_bp = Blueprint('audit_logs', __name__)
 
@@ -27,7 +28,7 @@ def list_audit_logs():
     page = request.args.get('page', 1, type=int)
     per_page = min(request.args.get('per_page', 50, type=int), 200)
 
-    query = AuditLog.query
+    query = AuditLog.query.filter_by(organization_id=tenant_org_id())
     if action:
         query = query.filter(AuditLog.action.ilike(f'%{action}%'))
     if user_id:
@@ -48,5 +49,5 @@ def list_audit_logs():
 @audit_logs_bp.route('/<int:log_id>', methods=['GET'])
 @require_admin
 def get_audit_log(log_id):
-    entry = AuditLog.query.get_or_404(log_id)
+    entry = AuditLog.query.filter_by(id=log_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': entry.to_dict()})

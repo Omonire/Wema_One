@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from models.user import User
+from services.tenant import tenant_org_id
 
 users_bp = Blueprint('users', __name__)
 
@@ -13,7 +14,7 @@ def get_users():
     if user.role not in ('ADMIN', 'SUPER_ADMIN'):
         return jsonify({'success': False, 'message': 'Unauthorized'}), 403
 
-    users = User.query.all()
+    users = User.query.filter_by(organization_id=user.organization_id).all()
     return jsonify({'success': True, 'data': [u.to_dict() for u in users]})
 
 
@@ -24,7 +25,7 @@ def get_user(user_id):
     if user.role not in ('ADMIN', 'SUPER_ADMIN') and user.id != user_id:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 403
 
-    target = User.query.get_or_404(user_id)
+    target = User.query.filter_by(id=user_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': target.to_dict()})
 
 
@@ -35,7 +36,7 @@ def update_user(user_id):
     if current.role not in ('ADMIN', 'SUPER_ADMIN') and current.id != user_id:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 403
 
-    user = User.query.get_or_404(user_id)
+    user = User.query.filter_by(id=user_id, organization_id=tenant_org_id()).first_or_404()
     data = request.get_json()
     for field in ['first_name', 'last_name', 'phone', 'email', 'branch_id']:
         if field in data:

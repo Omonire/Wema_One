@@ -49,6 +49,7 @@ def create_app(config_name=None):
     with app.app_context():
         _create_all_safe()
         _ensure_columns(app)
+        _ensure_tenant_schema(app)
 
     if app.config.get('SEED_DATA'):
         try:
@@ -106,6 +107,38 @@ def _ensure_columns(app):
                 db.session.commit()
             except Exception:
                 db.session.rollback()
+
+
+TENANT_TABLES = [
+    'users', 'branches', 'services', 'appointments', 'queue_tickets',
+    'documents', 'payments', 'feedback', 'branch_posts',
+    'branch_solutions', 'solution_usage', 'notifications', 'audit_logs',
+]
+
+
+def _ensure_tenant_schema(app):
+    """Multi-tenant migration (SQLite + Postgres): add the organization_id column
+    to existing tables, then backfill legacy rows into a default organization."""
+    with app.app_context():
+        inspector = db.inspect(db.engine)
+        known = set(inspector.get_table_names())
+        if 'organizations' not in known:
+            return
+
+        for table in TENANT_TABLES:
+            if table not in known:
+                continue
+            cols = {c['name'] for c in inspector.get_columns(table)}
+            if 'organization_id' not in cols:
+                try:
+                    db.session.execute(db.text(f'ALTER TABLE {table} ADD COLUMN organization_id INTEGER'))
+                except Exception:
+                    db.session.rollback()
+        db.session.commit()
+
+        from services.tenant import ensure_default_org, backfill_org_rows
+        ensure_default_org()
+        backfill_org_rows()
 
 
 if __name__ == '__main__':

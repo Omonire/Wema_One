@@ -6,6 +6,7 @@ from models.payment import Payment
 from models.user import User
 from services.payment_service import PaymentService
 from services.audit_service import log_audit
+from services.tenant import tenant_org_id
 
 payments_bp = Blueprint('payments', __name__)
 
@@ -28,6 +29,7 @@ def create_payment():
     payment_method = payment_service.provider_name or 'Unknown'
 
     payment = Payment(
+        organization_id=tenant_org_id(),
         customer_id=customer_id,
         service_id=data['service_id'],
         branch_id=data.get('branch_id'),
@@ -76,7 +78,7 @@ def create_payment():
 @payments_bp.route('/<int:payment_id>/verify', methods=['POST'])
 @jwt_required()
 def verify_payment(payment_id):
-    payment = Payment.query.get_or_404(payment_id)
+    payment = Payment.query.filter_by(id=payment_id, organization_id=tenant_org_id()).first_or_404()
     customer_id = int(get_jwt_identity())
     if payment.customer_id != customer_id:
         return jsonify({'success': False, 'message': 'Access denied'}), 403
@@ -117,12 +119,12 @@ def get_payments():
 @payments_bp.route('/<int:payment_id>', methods=['GET'])
 @jwt_required()
 def get_payment(payment_id):
-    payment = Payment.query.get_or_404(payment_id)
+    payment = Payment.query.filter_by(id=payment_id, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': payment.to_dict()})
 
 
 @payments_bp.route('/ref/<string:ref>', methods=['GET'])
 @jwt_required()
 def get_payment_by_ref(ref):
-    payment = Payment.query.filter_by(transaction_ref=ref).first_or_404()
+    payment = Payment.query.filter_by(transaction_ref=ref, organization_id=tenant_org_id()).first_or_404()
     return jsonify({'success': True, 'data': payment.to_dict()})
