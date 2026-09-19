@@ -114,7 +114,7 @@ def create_organization():
             'user': admin.to_dict(),
             'token': token,
         },
-        'message': 'Workspace created. Welcome to Luma SaaS.'
+        'message': 'Workspace created. Welcome to Non_queue_Bank.'
     }), 201
 
 

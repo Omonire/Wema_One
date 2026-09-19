@@ -41,7 +41,7 @@ def info():
     return jsonify({
         'success': True,
         'data': {
-            'name': 'Luma API',
+            'name': 'NQB API',
             'version': '1.0.0',
             'environment': env,
             'provider': os.getenv('AI_PROVIDER', 'mock'),

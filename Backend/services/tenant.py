@@ -69,13 +69,22 @@ def get_org_by_slug_or_id(value):
 
 
 def ensure_default_org():
-    """Create a default organization for existing single-tenant deployments
-    (or an empty database) so all rows have a tenant. Safe to call any time."""
-    org = Organization.query.order_by(Organization.id).first()
+    """Return the default organization, creating it (or re-branding a legacy
+    one) so every row has a tenant. Safe to call any time."""
+    org = Organization.query.filter_by(slug='nqb').first()
+    if not org:
+        org = Organization.query.order_by(Organization.id).first()
+        if org and org.slug != 'nqb':
+            org.slug = 'nqb'
+            db.session.commit()
     if org:
+        if org.name == 'Luma':
+            org.name = 'Non_queue_Bank'
+            org.welcome_message = 'Welcome to Non_queue_Bank'
+            db.session.commit()
         return org
-    org = Organization(name='Luma', slug='luma', type='BANK', plan='STARTER',
-                       welcome_message='Welcome to Luma')
+    org = Organization(name='Non_queue_Bank', slug='nqb', type='BANK', plan='STARTER',
+                       welcome_message='Welcome to Non_queue_Bank')
     db.session.add(org)
     db.session.commit()
     sub = Subscription(organization_id=org.id, plan=org.plan, status='ACTIVE')

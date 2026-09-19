@@ -48,7 +48,7 @@ export default function RegisterPage() {
               <span className="text-white font-bold text-lg font-headline-md">L</span>
             </div>
             <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">Create your account</h1>
-            <p className="text-on-surface-variant text-sm mt-1">Join Luma for a connected service experience</p>
+            <p className="text-on-surface-variant text-sm mt-1">Join Non_queue_Bank for a connected service experience</p>
           </div>
         </Reveal>
 

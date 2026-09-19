@@ -44,7 +44,7 @@ class PaymentService:
                     amount=payment.amount,
                     customer_name=f"{payment.customer.first_name} {payment.customer.last_name}".strip() if payment.customer else 'Customer',
                     account_number=None,
-                    description=payment.narration or 'Luma service payment',
+                    description=payment.narration or 'NQB service payment',
                 )
                 return {
                     'success': True,
@@ -69,7 +69,7 @@ class PaymentService:
             try:
                 customer_email = getattr(payment.customer, 'email', None) if payment.customer else None
                 if not customer_email:
-                    customer_email = f"customer@luma.app"
+                    customer_email = f"customer@nqb.app"
                 
                 result = self.paystack.init_transaction(
                     email=customer_email,

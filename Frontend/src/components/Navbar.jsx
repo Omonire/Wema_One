@@ -91,7 +91,7 @@ export default function Navbar() {
             <div className="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm font-mono">L</span>
             </div>
-            <span className={`text-xl font-bold tracking-tight font-headline-md ${brandText}`}>Luma</span>
+            <span className={`text-xl font-bold tracking-tight font-headline-md ${brandText}`}>NQB</span>
           </Link>
           <span className={`hidden sm:inline-flex px-2 py-0.5 rounded-md font-data-mono-xs text-xs font-semibold uppercase tracking-wider ${badge}`}>Enterprise</span>
         </div>

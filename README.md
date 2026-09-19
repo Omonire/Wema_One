@@ -1,4 +1,4 @@
-# Luma — One Connected Customer Service Delivery Experience
+# Non_queue_Bank (NQB) — One Connected Customer Service Delivery Experience
 
 **Multi-tenant SaaS platform connecting customers, branches, payments, documents and AI-driven intelligence into one seamless banking-service experience.**
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Luma is a turnkey, white-label-ready customer-service platform for banks and financial institutions. It ships as a **full multi-tenant SaaS product**: each organization (bank, fintech, branch network) gets its own isolated workspace with its own users, branches, services, appointments, queues, documents, payments and analytics. A built-in platform console lets the operator onboard new customers, manage plans, and monitor every org.
+Non_queue_Bank (NQB) is a turnkey, white-label-ready customer-service platform for banks and financial institutions. It ships as a **full multi-tenant SaaS product**: each organization (bank, fintech, branch network) gets its own isolated workspace with its own users, branches, services, appointments, queues, documents, payments and analytics. A built-in platform console lets the operator onboard new customers, manage plans, and monitor every org.
 
 The product is fully demo-able out of the box: one-command seeding creates a complete organization with customers, officers, queues, documents and AI-generated insights.
 
@@ -81,7 +81,7 @@ Every tenant (bank/fintech) is represented by an `Organization` row with a uniqu
 - **ALAT Authenticator** — Pay with Bank Account (Wema/ALAT API)
 - **SocialPulse** — AI feedback intelligence and sentiment analysis
 - **BranchConnect** — Internal branch knowledge sharing
-- **Luma Intelligence** — Executive analytics dashboard
+- **NQB Intelligence** — Executive analytics dashboard
 - **Audit trail** — full per-org audit logging of actions
 
 ## Local Setup
@@ -105,7 +105,7 @@ python seed.py               # Seed demo data (drops + recreates)
 python app.py                # Start on port 5000
 ```
 
-Alternatively, set `SEED_DATA=1` in `Backend/.env` — the app auto-creates tables, applies tenant migrations, creates/backs-up the default `luma` organization, and seeds demo data on first boot (idempotent).
+Alternatively, set `SEED_DATA=1` in `Backend/.env` — the app auto-creates tables, applies tenant migrations, creates/backs-up the default `nqb` organization, and seeds demo data on first boot (idempotent).
 
 ### Frontend
 
@@ -141,7 +141,7 @@ SECRET_KEY=your-secret-key
 JWT_SECRET_KEY=your-jwt-secret
 
 # PostgreSQL in production; SQLite fallback if blank.
-DATABASE_URL=postgresql://user:password@host:5432/luma
+DATABASE_URL=postgresql://user:password@host:5432/nqb
 
 # 1 = seed demo data on first boot, 0 = never seed
 SEED_DATA=0
@@ -170,15 +170,15 @@ VITE_API_URL=            # blank = same-origin /api reverse proxy
 
 ## Demo Credentials
 
-The seeded `Luma` organization ships with these accounts (all `password123`):
+The seeded `Non_queue_Bank` organization ships with these accounts (all `password123`):
 
 | Role           | Email                  | Password    |
 | -------------- | ---------------------- | ----------- |
 | Customer       | david@test.com         | password123 |
-| Branch Officer | officer1@luma.com      | password123 |
-| Branch Manager | manager1@luma.com      | password123 |
-| Admin          | admin@luma.com         | password123 |
-| Super Admin    | superadmin@luma.com    | password123 |
+| Branch Officer | officer1@nqb.app      | password123 |
+| Branch Manager | manager1@nqb.app      | password123 |
+| Admin          | admin@nqb.app         | password123 |
+| Super Admin    | superadmin@nqb.app    | password123 |
 
 ## Demo Flow
 
@@ -190,8 +190,8 @@ The seeded `Luma` organization ships with these accounts (all `password123`):
 6. Upload documents, see TrustVerify analysis
 7. Initiate a fee payment via ALAT Authenticator (approve in ALAT app)
 8. Submit feedback, see AI sentiment analysis
-9. Login as **superadmin@luma.com** to open the platform console and manage orgs/plans
-10. Login as **admin@luma.com** for branch admin, intelligence dashboard and BranchConnect
+9. Login as **superadmin@nqb.app** to open the platform console and manage orgs/plans
+10. Login as **admin@nqb.app** for branch admin, intelligence dashboard and BranchConnect
 
 ## API Overview
 
@@ -229,7 +229,7 @@ All endpoints are tenant-scoped: authenticated calls use your org from the JWT; 
 
 ## AI Integration
 
-Luma uses a deterministic **mock** provider by default (works offline, costs nothing). Set `AI_ENABLED=true` and `AI_PROVIDER=groq` or `gemini` with a free API key to use real models:
+NQB uses a deterministic **mock** provider by default (works offline, costs nothing). Set `AI_ENABLED=true` and `AI_PROVIDER=groq` or `gemini` with a free API key to use real models:
 
 - **Groq** — `GROQ_API_KEY`, model `llama-3.3-70b-versatile` (free tier, OpenAI-compatible)
 - **Gemini** — `GEMINI_API_KEY`, model `gemini-2.0-flash` (free AI Studio key)

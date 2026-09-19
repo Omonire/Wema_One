@@ -18,7 +18,7 @@ export default function AdminBranchesPage() {
       <PageHeader
         eyebrow="Network"
         title="Manage Branches"
-        subtitle="All offices on the Luma platform."
+        subtitle="All offices on the Non_queue_Bank platform."
       />
 
       <Reveal delay={100} className="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl overflow-hidden shadow-sm">

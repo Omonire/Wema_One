@@ -1,6 +1,6 @@
-# Luma — Frontend
+# Non_queue_Bank (NQB) — Frontend
 
-React 19 + Vite + Tailwind CSS web app for the Luma customer-service platform.
+React 19 + Vite + Tailwind CSS web app for the Non_queue_Bank customer-service platform.
 
 ## Setup
 

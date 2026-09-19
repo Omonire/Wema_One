@@ -10,11 +10,11 @@ export default function Footer() {
               <div className="h-8 w-8 rounded-lg bg-primary-container flex items-center justify-center">
                 <span className="text-white font-bold text-sm font-mono">L</span>
               </div>
-              <span className="font-headline-md text-xl font-bold tracking-tight text-on-surface">Luma</span>
+              <span className="font-headline-md text-xl font-bold tracking-tight text-on-surface">NQB</span>
               <span className="px-2 py-0.5 rounded bg-surface-container text-primary font-data-mono-xs text-xs font-semibold uppercase">Easy Service</span>
             </div>
             <p className="text-sm text-on-surface-variant max-w-sm leading-relaxed">
-              Luma makes getting help simple, fast, and stress-free for everyday people and businesses.
+              Non_queue_Bank makes getting help simple, fast, and stress-free for everyday people and businesses.
             </p>
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <span className="px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-data-mono-xs text-xs font-medium border border-outline-variant/30">Verified Safe</span>
@@ -58,7 +58,7 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
-          <p>&copy; 2026 Luma Technologies. All rights reserved.</p>
+          <p>&copy; 2026 Non_queue_Bank Technologies. All rights reserved.</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-surface-container-low border border-outline-variant/30 font-data-mono-xs text-xs text-tertiary font-semibold">
             <span className="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
             <span>All Systems Running Smoothly &middot; 99.9% Uptime</span>

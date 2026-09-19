@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <PageHeader
-        eyebrow="About Luma"
+        eyebrow="About NQB"
         title="One journey. One connected experience."
         subtitle="Great customer service, with zero waiting and zero confusion — that's what we're building."
       />
@@ -19,7 +19,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-bold text-on-surface">Our Vision</h2>
           </div>
           <p className="text-on-surface-variant leading-relaxed">
-            Luma is a connected service experience platform designed around the complete customer journey.
+            Non_queue_Bank is a connected service experience platform designed around the complete customer journey.
             The core insight: customers experience problems as ONE journey, even though organizations often handle them as separate problems.
           </p>
         </Reveal>
@@ -34,7 +34,7 @@ export default function AboutPage() {
             discover missing documentation, leave frustrated, and complain online. Each step is handled in isolation.
           </p>
           <p className="text-on-surface font-semibold">
-            Luma connects that entire journey into one seamless experience.
+            Non_queue_Bank connects that entire journey into one seamless experience.
           </p>
         </Reveal>
 
@@ -50,7 +50,7 @@ export default function AboutPage() {
               { icon: 'payments', name: 'Easy Pay', desc: 'Integrated payment processing', bg: 'bg-primary-fixed/40', color: 'text-primary' },
               { icon: 'forum', name: 'SocialPulse', desc: 'AI feedback intelligence and sentiment analysis', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
               { icon: 'hub', name: 'BranchConnect', desc: 'Internal branch knowledge sharing', bg: 'bg-primary-fixed/40', color: 'text-primary' },
-              { icon: 'insights', name: 'Luma Intelligence', desc: 'Executive analytics dashboard', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
+              { icon: 'insights', name: 'NQB Intelligence', desc: 'Executive analytics dashboard', bg: 'bg-tertiary-fixed/40', color: 'text-tertiary' },
             ].map((m, i) => (
               <Reveal key={m.name} delay={i * 70} className={`p-4 rounded-xl ${m.bg} flex items-start gap-3`}>
                 <SvgIcon name={m.icon} size={22} className={m.color} />

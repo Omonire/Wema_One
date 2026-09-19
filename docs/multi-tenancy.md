@@ -1,6 +1,6 @@
 # Multi-Tenancy Architecture
 
-Luma is a single-deploy multi-tenant SaaS: one API + one database serves many
+Non_queue_Bank (NQB) is a single-deploy multi-tenant SaaS: one API + one database serves many
 bank/fintech organizations, each fully isolated.
 
 ## Entity Model
@@ -28,7 +28,7 @@ ForeignKey to `organizations.id`.
    `*_org_id()` helpers return the JWT org, and every route scopes queries
    with it. A user can never see another org's rows (verified by tests).
 2. **Public endpoint** (e.g. `GET /api/services/`) — reads `?org=<slug-or-id>`
-   via `resolve_public_org_id()`, falling back to the default `luma` org so
+   via `resolve_public_org_id()`, falling back to the default org (slug `nqb`) so
    the demo keeps working with a plain URL.
 3. **Registration** — `register` accepts `organization_id` or
    `organization_slug`, defaults to the first org.
@@ -42,8 +42,8 @@ On every boot, before the server accepts traffic:
    `ALTER TABLE ... ADD COLUMN organization_id INTEGER` (SQLite and
    PostgreSQL both supported; SQLite also handles the column-only case via
    `_ensure_columns`).
-3. `ensure_default_org()` creates the default `Luma` org (slug `luma`) if it
-   doesn't exist.
+3. `ensure_default_org()` creates the default org (slug `nqb`), renaming a
+   legacy `luma` org if one exists.
 4. `backfill_org_rows()` assigns any rows with `NULL organization_id` to the
    default org, so a pre-SaaS database upgrades cleanly with zero manual work.
 

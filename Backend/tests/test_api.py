@@ -238,7 +238,7 @@ def test_system_endpoints(client):
 
     info = client.get('/api/system/info')
     assert info.status_code == 200
-    assert info.get_json()['data']['name'] == 'Luma API'
+    assert info.get_json()['data']['name'] == 'NQB API'
 
     stats = client.get('/api/system/stats')
     assert stats.status_code == 200

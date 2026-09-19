@@ -45,7 +45,7 @@ export default function CreateWorkspacePage() {
               <SvgIcon name="building2" className="text-white text-[22px]" />
             </div>
             <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">Create your workspace</h1>
-            <p className="text-on-surface-variant text-sm mt-1">Spin up a Luma workspace for your organization in under a minute</p>
+            <p className="text-on-surface-variant text-sm mt-1">Spin up a Non_queue_Bank workspace for your organization in under a minute</p>
           </div>
         </Reveal>
 

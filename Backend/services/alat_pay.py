@@ -46,7 +46,7 @@ class ALATPayProvider:
     def configured(self):
         return bool(self.client_id and self.client_secret)
 
-    def init_consent(self, transaction_ref, amount, customer_name, account_number=None, description='Luma service payment'):
+    def init_consent(self, transaction_ref, amount, customer_name, account_number=None, description='NQB service payment'):
         if not self.configured:
             raise ALATNotConfiguredError('ALAT Authenticator not configured: ALAT_CLIENT_ID / ALAT_CLIENT_SECRET missing')
 

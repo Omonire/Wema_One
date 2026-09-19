@@ -18,7 +18,7 @@ export default function HelpPage() {
       <PageHeader
         eyebrow="Support"
         title="Help Center"
-        subtitle="Find answers to common questions about Luma."
+        subtitle="Find answers to common questions about Non_queue_Bank."
       />
 
       <div className="space-y-4">
@@ -38,7 +38,7 @@ export default function HelpPage() {
         className="bg-surface-container rounded-2xl border border-outline-variant/40 p-6 mt-8 text-center shadow-sm">
         <h3 className="font-semibold text-on-surface mb-2">Still need help?</h3>
         <p className="text-sm text-on-surface-variant mb-3">Contact our support team</p>
-        <p className="text-sm font-semibold text-primary font-data-mono">hello@luma.com • +234 800 LUMA-HELP</p>
+        <p className="text-sm font-semibold text-primary font-data-mono">hello@nqb.app • +234 800 NQB-HELP</p>
       </Reveal>
     </div>
   );

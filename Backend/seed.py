@@ -28,10 +28,10 @@ def seed(app, drop=True, only_if_empty=False):
             return False
 
         print("Seeding organization...")
-        org = Organization.query.filter_by(slug='luma').first()
+        org = Organization.query.filter_by(slug='nqb').first()
         if not org:
-            org = Organization(name='Luma', slug='luma', type='BANK', plan='STARTER',
-                               welcome_message='Welcome to Luma Bank. We make banking effortless.')
+            org = Organization(name='Non_queue_Bank', slug='nqb', type='BANK', plan='STARTER',
+                               welcome_message='Welcome to Non_queue_Bank. We make banking effortless.')
             db.session.add(org)
             db.session.flush()
         if not org.subscription:
@@ -40,8 +40,8 @@ def seed(app, drop=True, only_if_empty=False):
         print("Seeding users...")
         users = []
         roles_data = [
-            ('admin@luma.com', 'Admin', 'User', 'ADMIN', None),
-            ('superadmin@luma.com', 'Super', 'Admin', 'SUPER_ADMIN', None),
+            ('admin@nqb.app', 'Admin', 'User', 'ADMIN', None),
+            ('superadmin@nqb.app', 'Super', 'Admin', 'SUPER_ADMIN', None),
         ]
         for email, first, last, role, bid in roles_data:
             u = User(email=email, first_name=first, last_name=last, role=role, phone='08012345678',
@@ -61,7 +61,7 @@ def seed(app, drop=True, only_if_empty=False):
             b = Branch(name=name, address=addr, city=city, state=state,
                        organization_id=org.id,
                        phone=f'01-{random.randint(1000000, 9999999)}',
-                       email=f'{name.split()[0].lower()}@luma.com',
+                       email=f'{name.split()[0].lower()}@nqb.app',
                        latitude=random.uniform(6.0, 7.5),
                        longitude=random.uniform(3.0, 5.0))
             db.session.add(b)
@@ -69,10 +69,10 @@ def seed(app, drop=True, only_if_empty=False):
         db.session.flush()
 
         bo_emails = [
-            ('officer1@luma.com', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
-            ('officer2@luma.com', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
-            ('manager1@luma.com', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
-            ('manager2@luma.com', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
+            ('officer1@nqb.app', 'Adebayo', 'Okafor', 'BRANCH_OFFICER', 0),
+            ('officer2@nqb.app', 'Ngozi', 'Adeyemi', 'BRANCH_OFFICER', 1),
+            ('manager1@nqb.app', 'Chidi', 'Eze', 'BRANCH_MANAGER', 0),
+            ('manager2@nqb.app', 'Funke', 'Olawale', 'BRANCH_MANAGER', 1),
         ]
         for email, first, last, role, bidx in bo_emails:
             u = User(email=email, first_name=first, last_name=last, role=role,
@@ -83,7 +83,7 @@ def seed(app, drop=True, only_if_empty=False):
 
         print("Seeding services...")
         services_data = [
-            ('Open Business Account', 'Start your business journey with a Luma business account', 'Accounts', 45, 5000,
+            ('Open Business Account', 'Start your business journey with a Non_queue_Bank business account', 'Accounts', 45, 5000,
              ['Easy Processing', 'Instant Mastercard Generation', 'Zero Hidden Fees', 'Dedicated Relationship Manager'],
              'Business Banking Made Simple',
              'Building2',
@@ -104,7 +104,7 @@ def seed(app, drop=True, only_if_empty=False):
              'Pay Everywhere, Anytime',
              'CreditCard',
              [('Valid ID', 'Government-issued photo ID', True),
-              ('Account Number', 'Existing Luma account number', True)]),
+              ('Account Number', 'Existing Non_queue_Bank account number', True)]),
             ('Account Verification', 'Verify your account for enhanced services', 'Verification', 15, 0,
              ['Instant Verification', 'Enhanced Limits', 'Secure Process', 'One-Time Setup'],
              'Unlock Full Access',
@@ -382,10 +382,10 @@ def seed(app, drop=True, only_if_empty=False):
         print("Seed data created successfully!")
         print("\nDemo Credentials:")
         print("  Customer:    david@test.com / password123")
-        print("  Officer:     officer1@luma.com / password123")
-        print("  Manager:     manager1@luma.com / password123")
-        print("  Admin:       admin@luma.com / password123")
-        print("  Super Admin: superadmin@luma.com / password123")
+        print("  Officer:     officer1@nqb.app / password123")
+        print("  Manager:     manager1@nqb.app / password123")
+        print("  Admin:       admin@nqb.app / password123")
+        print("  Super Admin: superadmin@nqb.app / password123")
         return True
 
 

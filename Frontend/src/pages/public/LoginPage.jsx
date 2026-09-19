@@ -29,9 +29,9 @@ export default function LoginPage() {
 
   const demoAccounts = [
     { label: 'Customer', email: 'david@test.com' },
-    { label: 'Officer', email: 'officer1@Luma.com' },
-    { label: 'Manager', email: 'manager1@Luma.com' },
-    { label: 'Admin', email: 'admin@Luma.com' },
+    { label: 'Officer', email: 'officer1@nqb.app' },
+    { label: 'Manager', email: 'manager1@nqb.app' },
+    { label: 'Admin', email: 'admin@nqb.app' },
   ];
 
   return (
@@ -46,7 +46,7 @@ export default function LoginPage() {
               <span className="text-white font-bold text-lg font-headline-md">L</span>
             </div>
             <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">Welcome back</h1>
-            <p className="text-on-surface-variant text-sm mt-1">Sign in to your Luma account</p>
+            <p className="text-on-surface-variant text-sm mt-1">Sign in to your Non_queue_Bank account</p>
           </div>
         </Reveal>
 

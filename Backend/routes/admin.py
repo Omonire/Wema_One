@@ -278,7 +278,7 @@ def health():
         'success': True,
         'data': {
             'status': 'healthy',
-            'service': 'Luma API',
+            'service': 'NQB API',
             'version': '1.0.0'
         }
     })

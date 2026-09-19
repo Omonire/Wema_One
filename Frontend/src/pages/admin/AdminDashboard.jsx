@@ -39,7 +39,7 @@ export default function AdminDashboard() {
       <Reveal direction="down" className="mb-8 flex items-center justify-between gap-4">
         <div>
           <span className="font-data-mono-xs text-xs uppercase text-primary font-semibold tracking-wider">Executive oversight</span>
-          <h1 className="font-headline-md text-2xl md:text-3xl font-bold text-on-surface tracking-tight">Luma Intelligence</h1>
+          <h1 className="font-headline-md text-2xl md:text-3xl font-bold text-on-surface tracking-tight">NQB Intelligence</h1>
           <p className="text-on-surface-variant text-sm">Platform-wide analytics and operational insights</p>
         </div>
         <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-fixed/40 text-tertiary font-data-mono-xs text-xs font-semibold">

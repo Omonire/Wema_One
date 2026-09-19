@@ -20,22 +20,22 @@ const FAQS = [
   },
   {
     q: 'How do I save my spot in the line?',
-    a: 'Message us on WhatsApp or book online, and you get a digital ticket with your live position. Luma tells you when to leave home so you arrive right when your seat is ready.',
+    a: 'Message us on WhatsApp or book online, and you get a digital ticket with your live position. NQB tells you when to leave home so you arrive right when your seat is ready.',
   },
   {
     q: 'What happens if I forget a document?',
-    a: "You won't get turned away. Snap photos of your ID and forms before you travel — Luma checks them instantly and tells you exactly what's missing while you're still at home.",
+    a: "You won't get turned away. Snap photos of your ID and forms before you travel — NQB checks them instantly and tells you exactly what's missing while you're still at home.",
   },
   {
     q: 'Is my personal information safe?',
     a: 'Yes. Your details are protected with bank-grade encryption, only the staff member helping you can see your file, and every record is stamped and tamper-proof.',
   },
   {
-    q: 'Does using Luma cost anything?',
-    a: 'Luma is free for customers. Any service fees are shown upfront before you pay — no hidden charges, and your receipt lands on your phone instantly.',
+    q: 'Does using NQB cost anything?',
+    a: 'NQB is free for customers. Any service fees are shown upfront before you pay — no hidden charges, and your receipt lands on your phone instantly.',
   },
   {
-    q: 'Which organizations use Luma?',
+    q: 'Which organizations use NQB?',
     a: 'Banks, hospitals and clinics, government offices, phone companies, and online apps — anywhere people used to wait in lines to get served.',
   },
 ];
@@ -116,7 +116,7 @@ export default function LandingPage() {
           <Reveal>
             <p className="mb-5 inline-flex items-center gap-2 font-data-mono-xs text-[11px] uppercase tracking-[0.3em] text-tertiary-fixed-dim sm:text-xs">
               <span className="inline-block size-1.5 rounded-full bg-tertiary-fixed-dim" aria-hidden="true"></span>
-              Luma Enterprise · Customer Service for the Digital Economy
+              NQB Enterprise · Customer Service for the Digital Economy
             </p>
           </Reveal>
 
@@ -132,7 +132,7 @@ export default function LandingPage() {
 
           <Reveal delay={160}>
             <p className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-white/70">
-              Luma connects appointments, paperwork, payments, and live help behind one queue — so customers never wait
+              NQB connects appointments, paperwork, payments, and live help behind one queue — so customers never wait
               twice and staff never repeat themselves.
             </p>
           </Reveal>
@@ -364,13 +364,13 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* The Luma Easy Way */}
+          {/* The NQB Easy Way */}
           <div className="bg-surface-container-lowest rounded-2xl border border-tertiary-container/30 p-8 shadow-sm flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-tertiary-container/20 mb-6">
                 <div className="flex items-center gap-2">
                   <SvgIcon name="check_circle" className="text-tertiary text-[22px]" />
-                  <h3 className="text-lg font-bold text-on-surface">The Luma Easy Way</h3>
+                  <h3 className="text-lg font-bold text-on-surface">The NQB Easy Way</h3>
                 </div>
                 <span className="font-data-mono-xs text-xs bg-tertiary-fixed text-tertiary px-2.5 py-1 rounded-md font-bold">SIMPLE &amp; FAST</span>
               </div>
@@ -694,12 +694,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 6. HOW LUMA WORKS */}
+      {/* 6. HOW NQB WORKS */}
       <section className="w-full py-24 lg:py-32 px-6 lg:px-12 max-w-7xl mx-auto" id="how-it-works">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="font-label-caps text-xs uppercase text-primary-container font-semibold tracking-wider">How Luma works</span>
+          <span className="font-label-caps text-xs uppercase text-primary-container font-semibold tracking-wider">How NQB works</span>
           <h2 className="font-headline-lg text-3xl sm:text-4xl font-bold text-on-surface mt-2 tracking-tight">
-            How Luma keeps everything running smoothly.
+            How NQB keeps everything running smoothly.
           </h2>
           <p className="font-body-lg text-lg text-on-surface-variant mt-3 leading-relaxed">
             A simple 4-step circle that makes every visit easier than the last.
@@ -711,7 +711,7 @@ export default function LandingPage() {
           <div className="max-w-md mx-auto p-6 rounded-2xl bg-primary-container text-white text-center shadow-lg mb-10">
             <div className="flex items-center justify-center gap-2 mb-1">
               <SvgIcon name="hub" className="text-[24px]" />
-              <span className="font-headline-md text-lg font-bold">LUMA HUB</span>
+              <span className="font-headline-md text-lg font-bold">NQB HUB</span>
             </div>
             <span className="font-data-mono-xs text-xs text-primary-fixed uppercase tracking-wider font-semibold">Everything connected</span>
             <p className="text-xs text-white/80 mt-2">Connects customer phones, desk counters, and payments in real time.</p>
@@ -817,7 +817,7 @@ export default function LandingPage() {
             </Reveal>
             <Reveal delay={120}>
               <a
-                href="mailto:hello@luma.com"
+                href="mailto:hello@nqb.app"
                 className="mt-8 inline-flex items-center gap-2 h-11 px-6 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-sm font-semibold border border-outline-variant/60 shadow-sm transition-all"
               >
                 <SvgIcon name="support_agent" className="text-primary-container text-[18px]" />
@@ -871,13 +871,13 @@ export default function LandingPage() {
       <section className="w-full py-24 lg:py-32 px-6 lg:px-12 max-w-7xl mx-auto" id="pricing">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-surface-container-lowest text-primary font-data-mono-xs text-xs font-semibold border border-outline-variant/40 mb-5">
-            <span>LUMA FOR BUSINESS</span>
+            <span>NQB FOR BUSINESS</span>
           </div>
           <h2 className="font-headline-lg text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">
             One workspace for every service desk
           </h2>
           <p className="font-body-lg text-lg text-on-surface-variant leading-relaxed mt-3">
-            Banks, hospitals, telecoms, government offices — launch your branch in minutes with Luma.
+            Banks, hospitals, telecoms, government offices — launch your branch in minutes with NQB.
             Yield Management folks call it a queue killer. We call it Tuesday.
           </p>
         </div>
@@ -935,7 +935,7 @@ export default function LandingPage() {
               <span className="w-4 h-4 rounded bg-primary-container flex items-center justify-center">
                 <span className="text-white font-bold text-[9px]">L</span>
               </span>
-              <span>TRY LUMA TODAY</span>
+              <span>TRY NQB TODAY</span>
             </div>
             <h2 className="font-headline-lg text-3xl sm:text-4xl lg:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
               No more waiting in lines.<br />No more guesswork.
@@ -960,7 +960,7 @@ export default function LandingPage() {
             </div>
             <div className="pt-2 flex items-center gap-2 text-on-surface-variant font-data-mono-xs text-xs">
               <SvgIcon name="support_agent" className="text-primary-container text-[18px]" />
-              <span>Need help? Talk to our team: <span className="text-on-surface font-semibold underline cursor-pointer">hello@luma.com</span></span>
+              <span>Need help? Talk to our team: <span className="text-on-surface font-semibold underline cursor-pointer">hello@nqb.app</span></span>
             </div>
           </div>
 
