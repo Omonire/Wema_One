@@ -140,6 +140,13 @@ def _ensure_tenant_schema(app):
         ensure_default_org()
         backfill_org_rows()
 
+        from models.user import User
+        legacy = User.query.filter(User.email.like('%@luma.com')).all()
+        if legacy:
+            for u in legacy:
+                u.email = u.email.replace('@luma.com', '@nqb.app')
+            db.session.commit()
+
 
 if __name__ == '__main__':
     app = create_app()
