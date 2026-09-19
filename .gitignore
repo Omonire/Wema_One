@@ -18,3 +18,9 @@ Frontend/.env.production
 Thumbs.db
 .vscode/
 .idea/
+
+# Local artifacts (not source code)
+tools/
+Documentary/
+*.pptx
+freebuff-chat-*.md
