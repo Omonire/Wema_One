@@ -12,7 +12,10 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://luma-api.onrender.com/api/*
+        destination: https://luma-backend-uzf0.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
 
   # ─── Backend (Flask + Gunicorn) ───────────────────────────────────
   - type: web
