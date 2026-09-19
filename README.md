@@ -1,24 +1,32 @@
-# Luma — Customer Service for the Digital Economy
+# Luma — One Connected Customer Service Delivery Experience
 
-**One Connected Customer Service Delivery Experience.**
+**Multi-tenant SaaS platform connecting customers, branches, payments, documents and AI-driven intelligence into one seamless banking-service experience.**
 
 ---
 
 ## Overview
 
-Luma is a connected customer-service and operations-intelligence platform. It connects customers, branches, payments, documents and intelligence into one seamless service experience.
+Luma is a turnkey, white-label-ready customer-service platform for banks and financial institutions. It ships as a **full multi-tenant SaaS product**: each organization (bank, fintech, branch network) gets its own isolated workspace with its own users, branches, services, appointments, queues, documents, payments and analytics. A built-in platform console lets the operator onboard new customers, manage plans, and monitor every org.
+
+The product is fully demo-able out of the box: one-command seeding creates a complete organization with customers, officers, queues, documents and AI-generated insights.
+
+> Multi-tenant data model, tenant resolution, and the platform console are documented in [`docs/multi-tenancy.md`](docs/multi-tenancy.md).
 
 ## Architecture
 
 ```
 React (Vite + Tailwind CSS)
     ↓
-Flask REST API
+Flask REST API (JWT + role-based access)
     ↓
-Business Logic (Services)
+Business Logic (Services layer)
     ↓
 PostgreSQL (production) / SQLite (local fallback)
+    ↓
+Multi-tenant: every row is scoped by organization_id
 ```
+
+Every tenant (bank/fintech) is represented by an `Organization` row with a unique slug. All business data is scoped to `organization_id`, resolved at the API layer from the JWT (`org_id` claim) or from an explicit `?org=` slug on public endpoints. Legacy data is backfilled into a default org automatically on first boot.
 
 ## Technology Stack
 
@@ -28,20 +36,31 @@ PostgreSQL (production) / SQLite (local fallback)
 - Vite
 - Tailwind CSS
 - React Router
-- Recharts (available)
+- Recharts
+- Custom SVG icon system
 
 ### Backend
 
-- Python 3
-- Flask
-- Flask-CORS
+- Python 3 (Flask 3)
 - Flask-SQLAlchemy
-- Flask-JWT-Extended
+- Flask-JWT-Extended (JWT auth with role + org claims)
+- Flask-CORS
 - Flask-Marshmallow
+- SQLAlchemy 2.0
 - bcrypt
 - psycopg2 (PostgreSQL driver)
+- flask-limiter (rate limiting)
+- pytest (test suite: 25 passing tests)
 
 ## Features
+
+### SaaS / Tenant Layer
+
+- **Organizations** — self-serve workspace signup (`/workspace`), unique slug, org type (BANK/FINTECH/CUSTOMER), plan tier
+- **Subscriptions** — plan tiers (Starter / Pro / Enterprise), status lifecycle (trialing → active → cancelled), start/end dates
+- **Tenant isolation** — all rows scoped by `organization_id`; API resolves org from JWT or public slug
+- **Platform console** — `SUPER_ADMIN` console to create/update orgs, change plans, and view per-org stats
+- **Auto-migration** — adds missing `organization_id` columns and backfills legacy data on boot (SQLite + PostgreSQL)
 
 ### Core Customer Journey
 
@@ -56,12 +75,14 @@ PostgreSQL (production) / SQLite (local fallback)
 
 ### Modules
 
+- **Multi-tenant workspaces** — org onboarding, plan management, per-org data isolation
 - **SmartQueue** — Digital queue and appointment management
 - **TrustVerify AI** — AI-powered document verification
 - **ALAT Authenticator** — Pay with Bank Account (Wema/ALAT API)
 - **SocialPulse** — AI feedback intelligence and sentiment analysis
 - **BranchConnect** — Internal branch knowledge sharing
 - **Luma Intelligence** — Executive analytics dashboard
+- **Audit trail** — full per-org audit logging of actions
 
 ## Local Setup
 
@@ -84,12 +105,29 @@ python seed.py               # Seed demo data (drops + recreates)
 python app.py                # Start on port 5000
 ```
 
+Alternatively, set `SEED_DATA=1` in `Backend/.env` — the app auto-creates tables, applies tenant migrations, creates/backs-up the default `luma` organization, and seeds demo data on first boot (idempotent).
+
 ### Frontend
 
 ```bash
 cd Frontend
 npm install
 npm run dev                  # Start on port 5173
+```
+
+### Tests
+
+```bash
+cd Backend
+python -m pytest -q          # 25 tests: core flows + multi-tenant isolation
+```
+
+### Frontend build + lint
+
+```bash
+cd Frontend
+npm run build
+npm run lint
 ```
 
 ## Environment Variables
@@ -132,6 +170,8 @@ VITE_API_URL=            # blank = same-origin /api reverse proxy
 
 ## Demo Credentials
 
+The seeded `Luma` organization ships with these accounts (all `password123`):
+
 | Role           | Email                  | Password    |
 | -------------- | ---------------------- | ----------- |
 | Customer       | david@test.com         | password123 |
@@ -142,49 +182,50 @@ VITE_API_URL=            # blank = same-origin /api reverse proxy
 
 ## Demo Flow
 
-1. Login as **david@test.com** (Customer)
-2. Browse services, check requirements
-3. Book an appointment at a branch
-4. Join queue, receive ticket LUM-XXXX
-5. Upload documents, see TrustVerify analysis
-6. Initiate a fee payment via ALAT Authenticator (approve in ALAT app)
-7. Submit feedback, see AI sentiment analysis
-8. Login as **admin@luma.com**
-9. View intelligence dashboard with insights
-10. View BranchConnect solutions
+1. Visit `/workspace` — create your own organization (bank or fintech) and admin account in seconds
+2. Login as **david@test.com** (Customer) to see a seeded org's experience
+3. Browse services, check requirements
+4. Book an appointment at a branch
+5. Join queue, receive ticket LUM-XXXX
+6. Upload documents, see TrustVerify analysis
+7. Initiate a fee payment via ALAT Authenticator (approve in ALAT app)
+8. Submit feedback, see AI sentiment analysis
+9. Login as **superadmin@luma.com** to open the platform console and manage orgs/plans
+10. Login as **admin@luma.com** for branch admin, intelligence dashboard and BranchConnect
 
-## API Endpoints
+## API Overview
 
-| Method | Endpoint                        | Description              |
-| ------ | ------------------------------- | ------------------------ |
-| POST   | /api/auth/register              | Register user            |
-| POST   | /api/auth/login                 | Login                    |
-| GET    | /api/auth/me                    | Get current user         |
-| GET    | /api/services/                  | List services            |
-| GET    | /api/branches/                  | List branches            |
-| POST   | /api/appointments/              | Create appointment       |
-| GET    | /api/appointments/slots         | Get available slots      |
-| POST   | /api/queues/                    | Join queue               |
-| POST   | /api/queues/:id/check-in        | Check in                 |
-| POST   | /api/queues/:id/complete        | Complete service         |
-| POST   | /api/documents/upload           | Upload document          |
-| POST   | /api/payments/                  | Initiate ALAT payment    |
-| POST   | /api/payments/:id/verify        | Verify ALAT payment      |
-| POST   | /api/feedback/                  | Submit feedback          |
-| GET    | /api/feedback/analysis          | Get analysis             |
-| GET    | /api/branchconnect/posts        | List posts               |
-| POST   | /api/branchconnect/posts        | Create post              |
-| GET    | /api/analytics/dashboard        | Dashboard data           |
-| GET    | /api/analytics/insights         | AI insights              |
-| GET    | /api/notifications/             | My notifications         |
-| GET    | /api/notifications/unread-count | Unread count             |
-| POST   | /api/notifications/broadcast    | Admin broadcast          |
-| GET    | /api/audit-logs/                | Audit trail (admin)      |
-| GET    | /api/system/health              | Health check             |
-| GET    | /api/system/info                | Version / environment    |
-| GET    | /api/system/stats               | Entity counts            |
-| GET    | /api/social-studio/overview     | Feedback intelligence    |
-| POST   | /api/social-studio/analyze      | Analyze text with AI     |
+| Method | Endpoint                             | Description                        |
+| ------ | ------------------------------------ | ---------------------------------- |
+| POST   | /api/auth/register                   | Register user (joins an org)       |
+| POST   | /api/auth/login                      | Login                               |
+| GET    | /api/auth/me                         | Get current user                   |
+| GET    | /api/organizations/                  | Public org list                    |
+| GET    | /api/organizations/:slug             | Org by slug                        |
+| POST   | /api/organizations/                  | Self-serve workspace signup        |
+| GET    | /api/organizations/me                | My org (JWT)                       |
+| *      | /api/organizations/platform          | Platform console (SUPER_ADMIN)     |
+| GET    | /api/services/                       | List services                      |
+| GET    | /api/branches/                       | List branches                      |
+| POST   | /api/appointments/                   | Create appointment                 |
+| GET    | /api/appointments/slots              | Get available slots                |
+| POST   | /api/queues/                         | Join queue                         |
+| POST   | /api/queues/:id/check-in             | Check in                           |
+| POST   | /api/queues/:id/complete             | Complete service                   |
+| POST   | /api/documents/upload                | Upload document                    |
+| POST   | /api/payments/                       | Initiate ALAT payment              |
+| POST   | /api/payments/:id/verify             | Verify ALAT payment                |
+| POST   | /api/feedback/                       | Submit feedback                    |
+| GET    | /api/feedback/analysis               | Get analysis                       |
+| GET    | /api/branchconnect/posts             | List posts                         |
+| GET    | /api/analytics/dashboard             | Dashboard data                     |
+| GET    | /api/analytics/insights              | AI insights                        |
+| GET    | /api/notifications/                  | My notifications                   |
+| GET    | /api/audit-logs/                     | Audit trail (admin)                |
+| GET    | /api/system/health                   | Health check                       |
+| GET    | /api/system/info                     | Version / environment              |
+
+All endpoints are tenant-scoped: authenticated calls use your org from the JWT; public listing endpoints accept `?org=<slug-or-id>`.
 
 ## AI Integration
 
@@ -198,20 +239,17 @@ Luma uses a deterministic **mock** provider by default (works offline, costs not
 ### Backend on Render (API + PostgreSQL)
 
 1. Push this repo to GitHub.
-2. In Render: **New → Blueprint**, select the repo. Render reads `render.yaml` and creates:
-   - `luma-api` — Flask API (rootDir `Backend`, `gunicorn wsgi:app`)
-   - `luma-db` — free PostgreSQL
-3. When prompted, set the `sync: false` secrets: `CORS_ORIGINS` (your Vercel URL), `ALAT_CLIENT_ID`, `ALAT_CLIENT_SECRET`, and optionally `GROQ_API_KEY` / `GEMINI_API_KEY`.
+2. In Render: **New → Blueprint**, select the repo. Render reads `render.yaml` and creates `luma-api` (Flask, `gunicorn wsgi:app`, rootDir `Backend`) and `luma-db` (PostgreSQL).
+3. Set the `sync: false` secrets: `CORS_ORIGINS` (your frontend URL), `ALAT_CLIENT_ID`, `ALAT_CLIENT_SECRET`, and optionally `GROQ_API_KEY` / `GEMINI_API_KEY`.
 4. `SEED_DATA=1` seeds demo data on first boot (idempotent — skipped once data exists).
 5. Health check: `GET https://<luma-api>.onrender.com/api/system/health`
 
-### Frontend on Vercel
+### Frontend on Render / Vercel
 
-1. In Vercel: **Add New → Project**, import the repo.
-2. Set **Root Directory** to `Frontend` (framework auto-detected as Vite).
-3. Add environment variable: `VITE_API_URL=https://<luma-api>.onrender.com/api`
-4. Deploy. `vercel.json` handles SPA routing while keeping `/assets`, `/videos` static.
-5. Copy the Vercel URL back into Render's `CORS_ORIGINS`, then redeploy the API.
+1. Import the repo (root directory `Frontend`, Vite auto-detected).
+2. Add `VITE_API_URL=https://<luma-api>.onrender.com/api`.
+3. Add a Rewrite so SPA routing works: `/*` → `/index.html` (200). Keep the `/api/*` pass-through to the backend.
+4. Copy the frontend URL back into `CORS_ORIGINS` and redeploy the API.
 
 ### Manual / other hosts
 
@@ -225,8 +263,6 @@ export SEED_DATA=0
 
 gunicorn --bind 0.0.0.0:8000 wsgi:app
 ```
-
-> Note: Render's free web service cold-starts after inactivity and the free PostgreSQL instance expires after 90 days — upgrade for permanent production use.
 
 ## Known Limitations
 

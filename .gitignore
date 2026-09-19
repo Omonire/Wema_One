@@ -19,6 +19,13 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Python tooling
+.venv/
+venv/
+.pytest_cache/
+.coverage
+*.egg-info/
+
 # Local artifacts (not source code)
 tools/
 Documentary/
